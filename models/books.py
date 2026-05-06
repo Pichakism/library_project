@@ -9,4 +9,4 @@ class Book:
         self.book_status = book_status
     
     def add_book(self):
-        ...
+        pass
