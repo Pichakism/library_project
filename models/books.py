@@ -1,4 +1,3 @@
-import csv  
 class Book:
     def __init__(self, isbn, book_title, auther_name, publication_year, page_count, genre, book_status):
         self.isbn = isbn
