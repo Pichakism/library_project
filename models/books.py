@@ -1,7 +1,7 @@
 import csv  
 class Book:
-    def __init__(self, book_id, book_title, auther_name, publication_year, page_count, genre, book_status):
-        self.book_id = book_id
+    def __init__(self, isbn, book_title, auther_name, publication_year, page_count, genre, book_status):
+        self.isbn = isbn
         self.book_title = book_title
         self.auther_name = auther_name
         self.publication_year = publication_year
