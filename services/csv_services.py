@@ -16,7 +16,9 @@ def save_book_in_csv(book):
                 "publication_year",
                 "page_count",
                 "genre",
-                "book_status"
+                "book_status",
+                "physical_version",
+                "digital_version"
             ])
         writer.writerow([
             book.isbn,
@@ -25,7 +27,9 @@ def save_book_in_csv(book):
             book.publication_year,
             book.page_count,
             book.genre,
-            book.book_status.name
+            book.book_status.name,
+            book.physical_version.name,
+            book.digital_version.name
         ])
         print(f"\nBook \"{book.book_title}\" saved Successfully...")
     

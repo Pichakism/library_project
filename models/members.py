@@ -1,4 +1,3 @@
-from models.book_status import Book_Status
 class Member:
     def __init__(self, id, first_name, last_name, phone_number, member_status, date):
         self.id = id
@@ -15,5 +14,5 @@ class Member:
             f"Last name = {self.last_name}\n"
             f"Phone number = {self.phone_number}\n"
             f"Status = {self.member_status}\n"
-            f"date of join = {self.date}\n"
+            f"Date of join = {self.date}"
         )

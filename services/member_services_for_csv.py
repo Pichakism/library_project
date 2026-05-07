@@ -2,7 +2,7 @@ import csv
 import datetime
 from services.gtj import gregorian_to_jalali
 from models.members import Member
-from models.member_status import Member_Status
+from models.status import Member_Status
 from services.csv_services import *
 
 def add_member_in_csv():
@@ -36,7 +36,7 @@ def search_member_in_csv():
         print("Invalid choice!")
 
 def member_managment():
-    user_input = (input("\nWhat you want to do?\n1 - Add member\n2 - Search member\n\nEnter your request: "))
+    user_input = (input("\nWhat you want to do?\n1 - Add a member\n2 - Search a member\n\nEnter your request: "))
     if user_input == "1":
         add_member_in_csv()
     elif user_input == "2":

@@ -1,5 +1,5 @@
 class Book:
-    def __init__(self, isbn, book_title, auther_name, publication_year, page_count, genre, book_status):
+    def __init__(self, isbn, book_title, auther_name, publication_year, page_count, genre, book_status, physical_version, digital_version):
         self.isbn = isbn
         self.book_title = book_title
         self.auther_name = auther_name
@@ -7,6 +7,8 @@ class Book:
         self.page_count = page_count
         self.genre = genre
         self.book_status = book_status
+        self.physical_version = physical_version
+        self.digital_version = digital_version
     
     def __str__(self):
         return(
@@ -14,7 +16,9 @@ class Book:
             f"Book title = {self.book_title}\n"
             f"Auther name = {self.auther_name}\n"
             f"Publication date = {self.publication_year}\n"
-            f"Page Number = {self.page_count}\n"
+            f"Page number = {self.page_count}\n"
             f"Genre = {self.genre}\n"
-            f"Status = {self.book_status}"
+            f"Status = {self.book_status}\n"
+            f"Physical version = {self.physical_version}\n"
+            f"Digital version = {self.digital_version}"
         )
