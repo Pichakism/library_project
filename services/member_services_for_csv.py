@@ -6,6 +6,7 @@ from models.status import Member_Status
 from services.csv_services import *
 
 def add_member_in_csv():
+    print("\n-----Add Member Menu-----")
     id = input("\nEnter member ID: ")
     first_name = input("Enter member first name: ")
     last_name = input("Enter member last name: ")
@@ -16,29 +17,53 @@ def add_member_in_csv():
     save_member_in_csv(Member(id, first_name, last_name, phone_number,Member_Status(member_status), date))
 
 def search_member_in_csv():
-    search_fields = {
-        "1": "id",
-        "2": "first_name",
-        "3": "last_name",
-        "4": "phone_number",
-        "5": "member_status",
-        "6": "date"
-    }
-    user_input = input("\nHow do you want to search?\n1 - By ID\n2 - By First name\n3 - By Last name\n4 - By Phone number\n5 - By Member status\n6 - By Date of join\n\nEnter: ")
-    
-    if user_input in search_fields:
-        value = input("\nEnter search value: ")
-        search_member(
-            search_fields[user_input],
-            value
-        )
-    else:
-        print("Invalid choice!")
+    while True:
+        search_fields = {
+            "1": "id",
+            "2": "first_name",
+            "3": "last_name",
+            "4": "phone_number",
+            "5": "member_status",
+            "6": "date"
+        }
+        user_input = input(
+            "\n-----Search Member Menu-----\n"
+            "How do you want to search?\n"
+            "1 - By ID\n"
+            "2 - By First name\n"
+            "3 - By Last name\n"
+            "4 - By Phone number\n"
+            "5 - By Member status\n"
+            "6 - By Date of join\n"
+            "0 - Back...\n\n"
+            "Enter: "
+            )
+        
+        if user_input in search_fields:
+            value = input("\nEnter search value: ")
+            search_member(
+                search_fields[user_input],
+                value
+            )
+        elif user_input == "0":
+            return
+        else:
+            print("Invalid choice!")
 
 def member_managment():
-    user_input = (input("\nWhat you want to do?\n1 - Add a member\n2 - Search a member\n\nEnter your request: "))
-    if user_input == "1":
-        add_member_in_csv()
-    elif user_input == "2":
-        search_member_in_csv()
+    while True:
+        user_input = (input(
+            "\n-----Member Managment Menu-----\n"
+            "What you want to do?\n"
+            "1 - Add a member\n"
+            "2 - Search a member\n"
+            "0 - Back...\n\n"
+            "Enter your request: ")
+            )
+        if user_input == "1":
+            add_member_in_csv()
+        elif user_input == "2":
+            search_member_in_csv()
+        elif user_input == "0":
+            return
 
