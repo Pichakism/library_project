@@ -8,3 +8,5 @@ venv/
 *.log
 
 data/
+env/
+test.py
