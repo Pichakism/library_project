@@ -3,6 +3,11 @@ from models.books import Book
 from models.status import *
 from services.csv_services import *
 
+
+# Adds a new book to CSV
+# - Takes user input for all book fields
+# - Creates a Book object
+# - Calls save_book() to persist it in CSV
 def add_book_in_csv():
     print("\n-----Add Book Menu-----")
     isbn = input("\nEnter book ISBN: ")
@@ -26,6 +31,10 @@ def add_book_in_csv():
             Physical_version(physical_version),
             Digital_version(digital_version)))
 
+# Searches books in CSV based on selected field
+# - Shows search menu
+# - Takes search column + value
+# - Calls search_book() from services
 def search_book_in_csv():
     while True:
         search_fields = {
@@ -63,6 +72,10 @@ def search_book_in_csv():
         else:
             print("Invalid choice!")
     
+# Edits an existing book record in CSV
+# - Selects column to search
+# - Gets search value
+# - Calls edit_book() to update matched record
 def edit_book_in_csv():
     while True:
         search_column = int(input(
@@ -88,6 +101,10 @@ def edit_book_in_csv():
         else:
             edit_book(search_column, search_value)
 
+# Removes a book from CSV
+# - Selects column to search
+# - Gets search value
+# - Calls remove_book() to delete matched record
 def remove_book_in_csv():
     while True:
         search_column = int(input(
@@ -113,6 +130,8 @@ def remove_book_in_csv():
         else:
             remove_book(search_column, search_value)
 
+# Main book management menu
+# - Routes user to add, search, edit, or remove book functions
 def book_managment():
     while True:
         user_input = (input(

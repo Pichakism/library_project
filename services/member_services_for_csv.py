@@ -5,6 +5,11 @@ from models.members import Member
 from models.status import Member_Status
 from services.csv_services import *
 
+# Adds a new member to CSV
+# - Gets member info from user input
+# - Converts current Gregorian date to Jalali
+# - Creates Member object
+# - Calls save_member() to store data in CSV
 def add_member_in_csv():
     print("\n-----Add Member Menu-----")
     id = input("\nEnter member ID: ")
@@ -16,6 +21,10 @@ def add_member_in_csv():
 
     save_member(Member(id, first_name, last_name, phone_number,Member_Status(member_status), date))
 
+# Searches members in CSV based on selected field
+# - Shows search menu
+# - Maps user choice to column name
+# - Calls search_member() with selected field and value
 def search_member_in_csv():
     while True:
         search_fields = {
@@ -47,6 +56,10 @@ def search_member_in_csv():
         else:
             print("Invalid choice!")
 
+# Edits an existing member in CSV
+# - Selects column to search
+# - Gets value to locate member
+# - Calls edit_member() to update record
 def edit_member_in_csv():
     while True:
         search_column = int(input(
@@ -69,6 +82,10 @@ def edit_member_in_csv():
         else:
             edit_member(search_column, search_value)
 
+# Removes a member from CSV
+# - Selects column to search
+# - Gets value to identify member
+# - Calls remove_member() to delete record
 def remove_member_in_csv():
     while True:
         search_column = int(input(
@@ -91,6 +108,8 @@ def remove_member_in_csv():
         else:
             remove_member(search_column, search_value)
 
+# Main menu for member management
+# - Routes user to add, search, edit, or remove member operations
 def member_managment():
     while True:
         user_input = (input(

@@ -2,6 +2,10 @@ from models.books import Book
 from services.book_services_for_csv import book_managment
 from services.member_services_for_csv import member_managment
 
+# Main entry point of the program
+# - Shows the starter menu to the user
+# - Routes user to Book or Member management modules
+# - Keeps program running until user chooses Exit
 def starter():
     while True:
         print(
@@ -21,5 +25,6 @@ def starter():
             print("\n***Bye Bye...!***\n")
             break
 
-
+# Program execution starts here
+# - Calls starter() to launch main menu
 starter()

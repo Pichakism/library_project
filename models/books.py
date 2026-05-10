@@ -1,3 +1,6 @@
+# Represents a Book entity in the system
+# - Stores all metadata related to a book
+# - Used for creating book objects before saving to CSV
 class Book:
     def __init__(self, isbn, book_title, auther_name, publication_year, page_count, genre, book_status, physical_version, digital_version):
         self.isbn = isbn
@@ -10,6 +13,8 @@ class Book:
         self.physical_version = physical_version
         self.digital_version = digital_version
     
+    # Returns a formatted string representation of a Book object
+    # - Used for printing book details in a readable format
     def __str__(self):
         return(
             f"ISBN = {self.isbn}\n"
