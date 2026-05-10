@@ -47,28 +47,25 @@ def search_member_in_csv():
         else:
             print("Invalid choice!")
 
-# NOTE: This function isn't complete yet...
 def edit_member_in_csv():
     while True:
         search_column = int(input(
-            "\n1 - ISBN"
-            "\n2 - Book Title"
-            "\n3 - Auter Name"
-            "\n4 - Publication Year"
-            "\n5 - Page Count"
-            "\n6 - Genre"
-            "\n7 - Book Status"
-            "\n8 - Physical Version"
-            "\n9 - Digital Version"
+            "\n1 - ID"
+            "\n2 - First Name"
+            "\n3 - Last Name"
+            "\n4 - Phone Number"
+            "\n5 - Member Status"
+            "\n6 - Date of Join"
             "\n0 - Back"
             "\n\nWhich column should we search based on? : "))
+        if search_column == 0:
+            return
+
         search_value = input("\nWhat is the desired value to search for? : ")
 
-        if search_column not in range(1, 9):
+        if search_column not in range(1, 6):
             print("ERROR: Column is not valid!")
             continue
-        elif search_column == "0":
-            return
         else:
             edit_member(search_column, search_value)
 

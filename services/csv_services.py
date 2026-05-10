@@ -122,7 +122,6 @@ def edit_book(search_col, search_val):
         print("No changes.")
         return
     
-    #OPTIMIZE: ...
     book_df = edit_row(book_df, selected_index, updates, csv_book_file_path)
     print(f'\nRow {selected_index} updated successfully.')
     return
@@ -165,4 +164,47 @@ def search_member(field, value):
 
 # TODO: Complete This Function...
 def edit_member(search_col, search_val):
-    ...
+    global member_df
+    search_col = member_df.columns[search_col - 1]
+    matching_rows = find_rows(member_df, search_col, search_val)
+    if matching_rows.empty:
+        print("\n")
+        print("*" * 40)
+        print(f"No rows with value: \"{search_val}\" found.")
+        print("*" * 40)
+        return
+    print("\n")
+    print("*" * 120)
+    print("Rows found:\n\n", matching_rows)
+    print("*" * 120)
+    try:
+        selected_index = int(input("\nWhich row index do you want to edit? : "))
+    except ValueError:
+        print("\nInvalid value!!!")
+        return
+    if selected_index not in matching_rows.index:
+        print("\nInvalid row index...!")
+        return
+    selected_row = member_df.loc[[selected_index]]
+    updates = {}
+    print(
+        "\nEnter a new value: "
+        "(Press Enter to skip)"
+    )
+    for col in member_df.columns:
+        current_value = selected_row.iloc[0][col]
+        new_value = input(
+            f"{col} "
+            f"(current: {current_value}): "
+        )
+        # print(type(new_value))
+        if new_value:
+            updates[col] = new_value
+    
+    if not updates:
+        print("No changes.")
+        return
+    
+    member_df = edit_row(member_df, selected_index, updates, csv_member_file_path)
+    print(f'\nRow {selected_index} updated successfully.')
+    return
