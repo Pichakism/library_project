@@ -69,6 +69,28 @@ def edit_member_in_csv():
         else:
             edit_member(search_column, search_value)
 
+def remove_member_in_csv():
+    while True:
+        search_column = int(input(
+            "\n1 - ID"
+            "\n2 - First Name"
+            "\n3 - Last Name"
+            "\n4 - Phone Number"
+            "\n5 - Member Status"
+            "\n6 - Date of Join"
+            "\n0 - Back"
+            "\n\nWhich column should we search based on? : "))
+        if search_column == 0:
+            return
+
+        search_value = input("\nWhat is the desired value to search for? : ")
+
+        if search_column not in range(1, 6):
+            print("ERROR: Column is not valid!")
+            continue
+        else:
+            remove_member(search_column, search_value)
+
 def member_managment():
     while True:
         user_input = (input(
@@ -76,7 +98,8 @@ def member_managment():
             "What you want to do?\n"
             "1 - Add a member\n"
             "2 - Search a member\n"
-            "3 - Edit Member\n"
+            "3 - Edit a Member\n"
+            "4 - Remove a Member\n"
             "0 - Back...\n\n"
             "Enter your request: "))
         if user_input == "1":
@@ -85,6 +108,8 @@ def member_managment():
             search_member_in_csv()
         elif user_input == "3":
             edit_member_in_csv()
+        elif user_input == "4":
+            remove_member_in_csv()
         elif user_input == "0":
             return
 

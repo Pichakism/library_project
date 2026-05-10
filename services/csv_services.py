@@ -126,6 +126,32 @@ def edit_book(search_col, search_val):
     print(f'\nRow {selected_index} updated successfully.')
     return
 
+def remove_book(search_col, search_val):
+    global book_df
+    search_col = book_df.columns[search_col - 1]
+    matching_rows = find_rows(book_df, search_col, search_val)
+    if matching_rows.empty:
+        print("\n")
+        print("*" * 40)
+        print(f"No rows with value: \"{search_val}\" found.")
+        print("*" * 40)
+        return
+    print("\n")
+    print("*" * 120)
+    print("Rows found:\n\n", matching_rows)
+    print("*" * 120)
+    try:
+        selected_index = int(input("\nWhich row index do you want to remove? : "))
+    except ValueError:
+        print("\nInvalid value!!!")
+        return
+    if selected_index not in matching_rows.index:
+        print("\nInvalid row index...!")
+        return
+    book_df = delete_row(book_df, selected_index, csv_book_file_path)
+    print(f'\nRow {selected_index} removed successfully.')
+    return
+
 def save_member(member):
     file_exists = os.path.exists(csv_member_file_path)
     with open(csv_member_file_path, "a", newline="") as file:
@@ -162,7 +188,6 @@ def search_member(field, value):
         if not found:
             print("Member not found!")
 
-# TODO: Complete This Function...
 def edit_member(search_col, search_val):
     global member_df
     search_col = member_df.columns[search_col - 1]
@@ -207,4 +232,30 @@ def edit_member(search_col, search_val):
     
     member_df = edit_row(member_df, selected_index, updates, csv_member_file_path)
     print(f'\nRow {selected_index} updated successfully.')
+    return
+
+def remove_member(search_col, search_val):
+    global member_df
+    search_col = member_df.columns[search_col - 1]
+    matching_rows = find_rows(member_df, search_col, search_val)
+    if matching_rows.empty:
+        print("\n")
+        print("*" * 40)
+        print(f"No rows with value: \"{search_val}\" found.")
+        print("*" * 40)
+        return
+    print("\n")
+    print("*" * 120)
+    print("Rows found:\n\n", matching_rows)
+    print("*" * 120)
+    try:
+        selected_index = int(input("\nWhich row index do you want to remove? : "))
+    except ValueError:
+        print("\nInvalid value!!!")
+        return
+    if selected_index not in matching_rows.index:
+        print("\nInvalid row index...!")
+        return
+    member_df = delete_row(member_df, selected_index, csv_member_file_path)
+    print(f'\nRow {selected_index} removed successfully.')
     return

@@ -88,6 +88,31 @@ def edit_book_in_csv():
         else:
             edit_book(search_column, search_value)
 
+def remove_book_in_csv():
+    while True:
+        search_column = int(input(
+            "\n-----Edit Book Menu-----\n"
+            "\n1 - ISBN"
+            "\n2 - Book Title"
+            "\n3 - Auter Name"
+            "\n4 - Publication Year"
+            "\n5 - Page Count"
+            "\n6 - Genre"
+            "\n7 - Book Status"
+            "\n8 - Physical Version"
+            "\n9 - Digital Version"
+            "\n0 - Back"
+            "\n\nWhich column should we search based on? : "))
+        if search_column == 0:
+            return
+        search_value = input("\nWhat is the desired value to search for? : ")
+
+        if search_column not in range(1, 9):
+            print("ERROR: Column is not valid!")
+            continue
+        else:
+            remove_book(search_column, search_value)
+
 def book_managment():
     while True:
         user_input = (input(
@@ -96,6 +121,7 @@ def book_managment():
             "1 - Add a Book\n"
             "2 - Search a Book\n"
             "3 - Edit a Book\n"
+            "4 - Remove a Book\n"
             "0 - Back...\n\n"
             "Enter your request: "))
         if user_input == "1":
@@ -104,5 +130,7 @@ def book_managment():
             search_book_in_csv()
         elif user_input == "3":
             edit_book_in_csv()
+        elif user_input == "4":
+            remove_book_in_csv()
         elif user_input == "0":
             return
