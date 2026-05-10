@@ -20,16 +20,21 @@ def find_rows(dataframe, column_name, search_value):
     matching_rows = dataframe[dataframe[column_name].astype(str).str.contains(search_value, case=False, na=False)]
     return matching_rows
 
-def edit_row(dataframe, row_index, updates):
+def edit_row(dataframe, row_index, updates, file_path):
     for col, new_val in updates.items():
         col_dtype = dataframe[col].dtype
         if pd.api.types.is_numeric_dtype(col_dtype):
-            try:
-                dataframe[col] = dataframe[col].astype(object)
-                print(f"[Debug: Column '{col}' temporarily cast to object]") # پیام دیباگ اختیاری
-            except Exception as e:
-                print(f"[Debug Error: Could not cast column '{col}' to object: {e}]")
+            dataframe[col] = dataframe[col].astype(object)
         dataframe.loc[row_index, col] = str(new_val)
+    return save_dataframe(dataframe, file_path)
+
+def delete_row(dataframe, row_index, file_path):
+    dataframe = dataframe.drop(index=row_index)
+    dataframe = dataframe.reset_index(drop=True)
+    return save_dataframe(dataframe, file_path)
+
+def save_dataframe(dataframe, file_path):
+    dataframe.to_csv(file_path, index=False)
     return dataframe
 
 def save_book(book):
@@ -118,18 +123,8 @@ def edit_book(search_col, search_val):
         return
     
     #OPTIMIZE: ...
-    book_df = edit_row(
-        book_df,
-        selected_index,
-        updates
-    )
-    book_df.to_csv(
-        csv_book_file_path,
-        index=False
-    )
-    print(
-        f'\nRow {selected_index} updated successfully.'
-    )
+    book_df = edit_row(book_df, selected_index, updates, csv_book_file_path)
+    print(f'\nRow {selected_index} updated successfully.')
     return
 
 def save_member(member):
