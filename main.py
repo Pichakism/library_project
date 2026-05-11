@@ -1,6 +1,6 @@
-from models.books import Book
-from services.book_services_for_csv import book_managment
-from services.member_services_for_csv import member_managment
+from src.models.books import Book
+from src.controler.book_menu import book_managment
+from src.controler.member_menu import member_managment
 
 # Main entry point of the program
 # - Shows the starter menu to the user
@@ -16,7 +16,7 @@ def starter():
             "0 - Exit..."
             )
         user_input = input("\n\nEnter number of your request: ")
-
+        
         if user_input == "1":
             book_managment()
         elif user_input == "2":

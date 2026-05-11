@@ -1,14 +1,15 @@
 import csv
-from models.books import Book
-from models.status import *
-from services.csv_services import *
+from src.models.books import Book
+from src.models.status import *
+# from src.services.csv_services import orchestration
+from src.repositories.csv_repository import *
 
 
 # Adds a new book to CSV
 # - Takes user input for all book fields
 # - Creates a Book object
 # - Calls save_book() to persist it in CSV
-def add_book_in_csv():
+def add_book(chosen_db):
     print("\n-----Add Book Menu-----")
     isbn = input("\nEnter book ISBN: ")
     book_title = input("Enter book title: ")
@@ -20,8 +21,7 @@ def add_book_in_csv():
     physical_version = int(input("\n1 - Yes\n2 - No\nEnter Physical version Value: "))
     digital_version = int(input("\n1 - Yes\n2 - No\nEnter Digital version Value: "))
 
-    save_book(Book(
-            isbn,
+    book = Book(isbn,
             book_title,
             auther_name,
             publication_year,
@@ -29,13 +29,16 @@ def add_book_in_csv():
             genre,
             Book_Status(book_status),
             Physical_version(physical_version),
-            Digital_version(digital_version)))
+            Digital_version(digital_version))
+    if chosen_db == "1":
+        save_book_in_csv(book)
+    
 
 # Searches books in CSV based on selected field
 # - Shows search menu
 # - Takes search column + value
 # - Calls search_book() from services
-def search_book_in_csv():
+def search_book(chosen_db):
     while True:
         search_fields = {
             "1": "isbn",
@@ -64,9 +67,8 @@ def search_book_in_csv():
             "Enter: ")
         if user_input in search_fields:
             value = input("\nEnter search value: ")
-            search_book(
-                int(user_input),
-                value)
+            if chosen_db == "1":
+                search_book(int(user_input), value)
         elif user_input == "0":
             return
         else:
@@ -76,7 +78,7 @@ def search_book_in_csv():
 # - Selects column to search
 # - Gets search value
 # - Calls edit_book() to update matched record
-def edit_book_in_csv():
+def edit_book(chosen_db):
     while True:
         search_column = int(input(
             "\n-----Edit Book Menu-----\n"
@@ -99,13 +101,14 @@ def edit_book_in_csv():
             print("ERROR: Column is not valid!")
             continue
         else:
-            edit_book(search_column, search_value)
+            if chosen_db == "1":
+                edit_book_in_csv(search_column, search_value)
 
 # Removes a book from CSV
 # - Selects column to search
 # - Gets search value
 # - Calls remove_book() to delete matched record
-def remove_book_in_csv():
+def remove_book(chosen_db):
     while True:
         search_column = int(input(
             "\n-----Edit Book Menu-----\n"
@@ -128,7 +131,8 @@ def remove_book_in_csv():
             print("ERROR: Column is not valid!")
             continue
         else:
-            remove_book(search_column, search_value)
+            if chosen_db == "1":
+                remove_book_in_csv(search_column, search_value)
 
 # Main book management menu
 # - Routes user to add, search, edit, or remove book functions
@@ -143,13 +147,20 @@ def book_managment():
             "4 - Remove a Book\n"
             "0 - Back...\n\n"
             "Enter your request: "))
-        if user_input == "1":
-            add_book_in_csv()
-        elif user_input == "2":
-            search_book_in_csv()
-        elif user_input == "3":
-            edit_book_in_csv()
-        elif user_input == "4":
-            remove_book_in_csv()
-        elif user_input == "0":
+        if user_input == "0":
             return
+        print(
+            "\n---Choose Database---"
+            "\nWhat Database do you want?\n"
+            "1 - CSV\n"
+            "2 - sqLite\n"
+            )
+        database_chosen = input("\n\nEnter number of your request: ")
+        if user_input == "1":
+            add_book(database_chosen)
+        elif user_input == "2":
+            search_book_in_csv(database_chosen)
+        elif user_input == "3":
+            edit_book(database_chosen)
+        elif user_input == "4":
+            remove_book(database_chosen)
