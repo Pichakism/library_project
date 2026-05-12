@@ -1,9 +1,9 @@
 import csv
 from src.models.books import Book
+from src.models.loan import Loan
 from src.models.status import *
 # from src.services.csv_services import orchestration
 from src.repositories.csv_repository import *
-
 
 # Adds a new book to CSV
 # - Takes user input for all book fields
@@ -20,6 +20,7 @@ def add_book(chosen_db):
     book_status = int(input("\n1 - Available\n2 - Unavailable\n3 - On loan\n4 - Reserved\nEnter book ststus: "))
     physical_version = int(input("\n1 - Yes\n2 - No\nEnter Physical version Value: "))
     digital_version = int(input("\n1 - Yes\n2 - No\nEnter Digital version Value: "))
+    count = int(input("Enter count of book: "))
 
     book = Book(isbn,
             book_title,
@@ -29,7 +30,8 @@ def add_book(chosen_db):
             genre,
             Book_Status(book_status),
             Physical_version(physical_version),
-            Digital_version(digital_version))
+            Digital_version(digital_version),
+            count)
     if chosen_db == "1":
         save_book_in_csv(book)
     
@@ -49,7 +51,8 @@ def search_book(chosen_db):
             "6": "genre",
             "7": "book_status",
             "8": "physical_version",
-            "9": "digital_version"
+            "9": "digital_version",
+            "10": "count",
         }
         user_input = input(
             "\n-----Search Book Menu-----\n"
@@ -63,12 +66,13 @@ def search_book(chosen_db):
             "7 - By status\n"
             "8 - Physical version\n"
             "9 - Digital version\n"
+            "10 - count\n"
             "0 - Back...\n\n"
             "Enter: ")
         if user_input in search_fields:
             value = input("\nEnter search value: ")
             if chosen_db == "1":
-                search_book(int(user_input), value)
+                search_book_in_csv(int(user_input), value)
         elif user_input == "0":
             return
         else:
@@ -91,13 +95,14 @@ def edit_book(chosen_db):
             "\n7 - Book Status"
             "\n8 - Physical Version"
             "\n9 - Digital Version"
+            "\n10 - Count"
             "\n0 - Back"
             "\n\nWhich column should we search based on? : "))
         if search_column == 0:
             return
         search_value = input("\nWhat is the desired value to search for? : ")
 
-        if search_column not in range(1, 9):
+        if search_column not in range(1, 10):
             print("ERROR: Column is not valid!")
             continue
         else:
@@ -121,18 +126,71 @@ def remove_book(chosen_db):
             "\n7 - Book Status"
             "\n8 - Physical Version"
             "\n9 - Digital Version"
+            "\n10 - Count"
             "\n0 - Back"
             "\n\nWhich column should we search based on? : "))
         if search_column == 0:
             return
         search_value = input("\nWhat is the desired value to search for? : ")
 
-        if search_column not in range(1, 9):
+        if search_column not in range(1, 10):
             print("ERROR: Column is not valid!")
             continue
         else:
             if chosen_db == "1":
                 remove_book_in_csv(search_column, search_value)
+
+def add_loan(chosen_db):
+    print("\n-----Add Member Menu-----")
+    id = input("\nEnter loan ID: ")
+    book_isbn = input("Enter book ISBN: ")
+    member_id = input("Enter member ID: ")
+    date = gregorian_to_jalali(datetime.date.today().year, datetime.date.today().month, datetime.date.today().day)
+
+    loan = Loan(id, book_isbn, member_id, date)
+    save_loan_in_csv(loan)
+
+def loan_book(chosen_db):
+    while True:
+        search_column_for_book = int(input(
+            "\n-----Edit Book Menu-----\n"
+            "\n1 - ISBN"
+            "\n2 - Book Title"
+            "\n3 - Auter Name"
+            "\n4 - Publication Year"
+            "\n5 - Page Count"
+            "\n6 - Genre"
+            "\n7 - Book Status"
+            "\n8 - Physical Version"
+            "\n9 - Digital Version"
+            "\n10 - Count"
+            "\n0 - Back"
+            "\n\nWhich column should we search based on? : "))
+        if search_column_for_book == 0:
+            return
+        search_value_for_book = input("\nWhat is the desired value to search for? : ")
+
+        search_column_for_member = int(input(
+            "\n1 - ID"
+            "\n2 - First Name"
+            "\n3 - Last Name"
+            "\n4 - Phone Number"
+            "\n5 - Member Status"
+            "\n6 - Date of Join"
+            "\n\nWhich column should we search based on? : "))
+        search_value_for_member = input("\nWhat is the desired value to search for? : ")
+
+        if search_column_for_book not in range(1, 10) and search_column_for_member not in range(1, 6):
+            print("ERROR: Column is not valid!")
+            continue
+        else:
+            if chosen_db == "1":
+                loan_book_in_csv(
+                    search_column_for_book,
+                    search_value_for_book,
+                    search_column_for_member,
+                    search_value_for_member
+                    )
 
 # Main book management menu
 # - Routes user to add, search, edit, or remove book functions
@@ -145,6 +203,7 @@ def book_managment():
             "2 - Search a Book\n"
             "3 - Edit a Book\n"
             "4 - Remove a Book\n"
+            "5 - Loan Book\n"
             "0 - Back...\n\n"
             "Enter your request: "))
         if user_input == "0":
@@ -155,12 +214,14 @@ def book_managment():
             "1 - CSV\n"
             "2 - sqLite\n"
             )
-        database_chosen = input("\n\nEnter number of your request: ")
+        database_chosen = input("\nEnter number of your request: ")
         if user_input == "1":
             add_book(database_chosen)
         elif user_input == "2":
-            search_book_in_csv(database_chosen)
+            search_book(database_chosen)
         elif user_input == "3":
             edit_book(database_chosen)
         elif user_input == "4":
             remove_book(database_chosen)
+        elif user_input == "5":
+            loan_book(database_chosen)

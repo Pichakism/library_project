@@ -2,7 +2,7 @@
 # - Stores all metadata related to a book
 # - Used for creating book objects before saving to CSV
 class Book:
-    def __init__(self, isbn, book_title, auther_name, publication_year, page_count, genre, book_status, physical_version, digital_version):
+    def __init__(self, isbn, book_title, auther_name, publication_year, page_count, genre, book_status, physical_version, digital_version, count):
         self.isbn = isbn
         self.book_title = book_title
         self.auther_name = auther_name
@@ -12,6 +12,7 @@ class Book:
         self.book_status = book_status
         self.physical_version = physical_version
         self.digital_version = digital_version
+        self.count = count
     
     # Returns a formatted string representation of a Book object
     # - Used for printing book details in a readable format
@@ -25,5 +26,6 @@ class Book:
             f"Genre = {self.genre}\n"
             f"Status = {self.book_status}\n"
             f"Physical version = {self.physical_version}\n"
-            f"Digital version = {self.digital_version}"
+            f"Digital version = {self.digital_version}\n"
+            f"Count = {self.on_lone}\n"
         )

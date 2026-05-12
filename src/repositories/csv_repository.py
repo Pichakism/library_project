@@ -1,12 +1,16 @@
 import csv
 import os
+import datetime
+from src.services.gtj import gregorian_to_jalali
 import pandas as pd
 from src.models.books import Book
 from src.models.members import Member
+from src.models.loan import Loan
 from src.storages.csv_storage import CsvStorage
 
 csv_book_file_path = "./data/book_data.csv"
 csv_member_file_path = "./data/member_data.csv"
+csv_loan_file_path = "./data/loan.csv"
 
 # Finds rows in a DataFrame based on a column and search value
 # - Uses case-insensitive partial matching (contains)
@@ -41,7 +45,7 @@ def delete_row(dataframe, row_index, file_path):
 # - Appends book data as a new row
 def save_book_in_csv(book):
     storage = CsvStorage()
-    storage.create_csv(book)
+    storage.create_book_csv(book)
     print(f"\nBook \"{book.book_title}\" saved Successfully...")
     
 # Searches books in book DataFrame based on selected column and value
@@ -145,12 +149,73 @@ def remove_book_in_csv(search_col, search_val):
     print(f'\nRow {selected_index} removed successfully.')
     return
 
+def save_loan_in_csv(loan):
+    storage = CsvStorage()
+    storage.create_loan_csv(loan)
+    print(f"\nBook \"{loan.book_isbn} for {loan.member_id}\" saved Successfully...")
+
+def loan_book_in_csv(search_column_for_book, search_value_for_book, search_column_for_member, search_value_for_member):
+    storage = CsvStorage()
+    try:
+        book_df = storage.load_dataframe(csv_book_file_path)
+        member_search_col = book_df.columns[search_column_for_book - 1]
+        matching_rows_1 = find_rows(book_df, member_search_col, search_value_for_book)
+        if matching_rows_1.empty:
+            print("\n")
+            print("*" * 40)
+            print(f"No rows with value: \"{search_value_for_book}\" found.")
+            print("*" * 40)
+            return
+        print("\n")
+        print("*" * 120)
+        print("Rows found:\n\n", matching_rows_1)
+        print("*" * 120)
+        member_df = storage.load_dataframe(csv_member_file_path)
+        search_col = member_df.columns[search_column_for_member - 1]
+        matching_rows_2 = find_rows(member_df, search_col, search_value_for_member)
+        if matching_rows_2.empty:
+            print("\n")
+            print("*" * 40)
+            print(f"No rows with value: \"{search_value_for_member}\" found.")
+            print("*" * 40)
+            return
+        print("\n")
+        print("*" * 120)
+        print("Rows found:\n\n", matching_rows_2)
+        print("*" * 120)
+
+        try:
+            selected_index_1 = int(input("\nWhich row index in book do you want? : "))
+        except ValueError:
+            print("\nInvalid value!!!")
+            return
+        try:
+            selected_index_2 = int(input("\nWhich row index in member do you want? : "))
+        except ValueError:
+            print("\nInvalid value!!!")
+            return
+        if selected_index_1 not in matching_rows_1.index or selected_index_2 not in matching_rows_2.index:
+            print("\nInvalid row index...!")
+            return
+        # print(matching_rows_1.iloc[selected_index_1, 0], matching_rows_2.iloc[selected_index_2, 0])
+        loan = Loan(input("\nEnter ID for loan: "),
+                    matching_rows_1.iloc[selected_index_1, 0],
+                    matching_rows_2.iloc[selected_index_2, 0],
+                    gregorian_to_jalali(datetime.date.today().year, datetime.date.today().month, datetime.date.today().day))
+        loan_df = storage.create_loan_csv(loan)
+        print(f'\nRow {selected_index_1} append successfully.')
+        return
+    except FileNotFoundError as e:
+        print(e, "Try again...")
+        return
+
+    
 # Saves a new member record into CSV file
 # - Creates file and header if not exists
 # - Appends member data as a new row
 def save_member_in_csv(member):
     storage = CsvStorage()
-    storage.create_csv(member)
+    storage.create_member_csv(member)
     print(f"\nMember \"{member.first_name} {member.last_name}\" saved Successfully...")
 
 # Searches a member in CSV file by field and value
