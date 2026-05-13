@@ -10,4 +10,5 @@ venv/
 data/
 env/
 test.py
+generate_key.py
 src/repositories/base_repository.py

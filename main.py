@@ -1,6 +1,10 @@
 from src.models.books import Book
+from storages.sqlite_storage import SqliteStorage
 from src.controler.book_menu import book_managment
 from src.controler.member_menu import member_managment
+from src.repositories.sqlite_repository import *
+
+sqlite_storage = SqliteStorage()
 
 # Main entry point of the program
 # - Shows the starter menu to the user
