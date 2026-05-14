@@ -3,8 +3,8 @@ import datetime
 from src.services.gtj import gregorian_to_jalali
 from src.models.members import Member
 from src.models.status import Member_Status
-# from src.services.csv_services import data_validation
-from src.repositories.csv_repository import *
+from src.repositories import sqlite_repository
+from src.repositories import csv_repository
 
 # Adds a new member to CSV
 # - Gets member info from user input
@@ -13,16 +13,20 @@ from src.repositories.csv_repository import *
 # - Calls save_member() to store data in CSV
 def add_member(chosen_db):
     print("\n-----Add Member Menu-----")
-    id = input("\nEnter member ID: ")
+    # id = input("\nEnter member ID: ")
     first_name = input("Enter member first name: ")
     last_name = input("Enter member last name: ")
     phone_number = input("Enter member phone number: ")
     member_status = int(input("\n1 - Available\n2 - Unavailable\nEnter member ststus: "))
-    date = gregorian_to_jalali(datetime.date.today().year, datetime.date.today().month, datetime.date.today().day)
+    date = str(gregorian_to_jalali(datetime.date.today().year, datetime.date.today().month, datetime.date.today().day))
 
-    member = Member(id, first_name, last_name, phone_number,Member_Status(member_status), date)
+    member = Member(first_name, last_name, phone_number,Member_Status(member_status), date)
     if chosen_db == "1":
-        save_member_in_csv(member)
+        add = csv_repository.MemberRepository()
+        add.save_member_in_csv(member)
+    elif chosen_db == "2":
+        add = sqlite_repository.MemberRepository()
+        add.save_member(member)
 
 # Searches members in CSV based on selected field
 # - Shows search menu
@@ -52,7 +56,11 @@ def search_member(chosen_db):
         if user_input in search_fields:
             value = input("\nEnter search value: ")
             if chosen_db == "1":
-                search_member_in_csv(search_fields[user_input], value)
+                search = csv_repository.MemberRepository()
+                search.search_member_in_csv(search_fields[user_input], value)
+            elif chosen_db == "2":
+                search = sqlite_repository.MemberRepository()
+                search.search_member(search_fields[user_input], value)
         elif user_input == "0":
             return
         else:
@@ -83,7 +91,8 @@ def edit_member(chosen_db):
             continue
         else:
             if chosen_db == "1":
-                edit_member_in_csv(search_column, search_value)
+                edit = csv_repository.MemberRepository()
+                edit.edit_member_in_csv(search_column, search_value)
 
 # Removes a member from CSV
 # - Selects column to search
@@ -91,6 +100,14 @@ def edit_member(chosen_db):
 # - Calls remove_member() to delete record
 def remove_member(chosen_db):
     while True:
+        search_fields = {
+            "1": "id",
+            "2": "first_name",
+            "3": "last_name",
+            "4": "phone_number",
+            "5": "member_status",
+            "6": "date"
+        }
         search_column = int(input(
             "\n1 - ID"
             "\n2 - First Name"
@@ -110,7 +127,11 @@ def remove_member(chosen_db):
             continue
         else:
             if chosen_db == "1":
-                remove_member_in_csv(search_column, search_value)
+                delete = csv_repository.MemberRepository()
+                delete.remove_member_in_csv(search_column, search_value)
+            elif chosen_db == "2":
+                delete = sqlite_repository.MemberRepository()
+                delete.delete_member(search_fields[str(search_column)], search_value)
 
 # Main menu for member management
 # - Routes user to add, search, edit, or remove member operations

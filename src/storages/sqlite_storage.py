@@ -68,5 +68,5 @@ class SqliteStorage:
         )
         connection.close()
 
-start = SqliteStorage()
-start.creat_table()
+# start = SqliteStorage()
+# start.creat_table()

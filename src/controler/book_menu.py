@@ -4,7 +4,8 @@ from src.models.loan import Loan
 from src.models.status import *
 # from src.services.csv_services import orchestration
 from src.repositories.csv_repository import *
-from src.repositories.sqlite_repository import *
+from src.repositories import sqlite_repository
+from src.repositories import csv_repository
 
 # Adds a new book to CSV
 # - Takes user input for all book fields
@@ -34,9 +35,10 @@ def add_book(chosen_db):
             Digital_version(digital_version),
             count)
     if chosen_db == "1":
-        save_book_in_csv(book)
+        add = csv_repository.BookRepository()
+        add.save_book_in_csv(book)
     elif chosen_db == "2":
-        add = BookRepository()
+        add = sqlite_repository.BookRepository()
         add.save_book(book)
 
     
@@ -77,9 +79,10 @@ def search_book(chosen_db):
         if user_input in search_fields:
             value = input("\nEnter search value: ")
             if chosen_db == "1":
-                search_book_in_csv(int(user_input), value)
+                search = csv_repository.BookRepository()
+                search.search_book_in_csv(int(user_input), value)
             elif chosen_db == "2":
-                search = BookRepository()
+                search = sqlite_repository.BookRepository()
                 search.search_book(search_fields[user_input], value)
         elif user_input == "0":
             return
@@ -115,13 +118,26 @@ def edit_book(chosen_db):
             continue
         else:
             if chosen_db == "1":
-                edit_book_in_csv(search_column, search_value)
+                edit = csv_repository.BookRepository()
+                edit.search_book_in_csv(search_column, search_value)
 
 # Removes a book from CSV
 # - Selects column to search
 # - Gets search value
 # - Calls remove_book() to delete matched record
 def remove_book(chosen_db):
+    search_fields = {
+            "1": "isbn",
+            "2": "book_title",
+            "3": "auther_name",
+            "4": "publication_year",
+            "5": "page_count",
+            "6": "genre",
+            "7": "book_status",
+            "8": "physical_version",
+            "9": "digital_version",
+            "10": "count",
+        }
     while True:
         search_column = int(input(
             "\n-----Edit Book Menu-----\n"
@@ -146,9 +162,13 @@ def remove_book(chosen_db):
             continue
         else:
             if chosen_db == "1":
-                remove_book_in_csv(search_column, search_value)
+                delete = csv_repository.BookRepository()
+                delete.remove_book_in_csv(search_column, search_value)
+            elif chosen_db == "2":
+                delete = sqlite_repository.BookRepository()
+                delete.delete_book(search_fields[str(search_column)], search_value)
 
-def add_loan(chosen_db):
+"""def add_loan(chosen_db):
     print("\n-----Add Member Menu-----")
     id = input("\nEnter loan ID: ")
     book_isbn = input("Enter book ISBN: ")
@@ -156,12 +176,12 @@ def add_loan(chosen_db):
     date = gregorian_to_jalali(datetime.date.today().year, datetime.date.today().month, datetime.date.today().day)
 
     loan = Loan(id, book_isbn, member_id, date)
-    save_loan_in_csv(loan)
+    save_loan_in_csv(loan)"""
 
 def loan_book(chosen_db):
     while True:
         search_column_for_book = int(input(
-            "\n-----Edit Book Menu-----\n"
+            "\n-----Loan Book Menu-----\n"
             "\n1 - ISBN"
             "\n2 - Book Title"
             "\n3 - Auter Name"
@@ -193,7 +213,8 @@ def loan_book(chosen_db):
             continue
         else:
             if chosen_db == "1":
-                loan_book_in_csv(
+                add = csv_repository.LoanRepository()
+                add.loan_book_in_csv(
                     search_column_for_book,
                     search_value_for_book,
                     search_column_for_member,
