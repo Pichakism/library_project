@@ -1,15 +1,39 @@
-from storages.sqlite_storage import SqliteStorage
+from src.storages.sqlite_storage import SqliteStorage
 
 class BookRepository:
-    def __init__(self, sqlite_storage):
-        self.storage = sqlite_storage
+    def __init__(self):
+        self.storage = SqliteStorage()
 
     # NOTE: book func...:
     def search_book(self):
         ...
 
-    def save_book(self):
-        ...
+    def save_book(self, book):
+        query = """
+                    INSERT INTO books (
+                        isbn,
+                        title,
+                        author_name,
+                        publication_year,
+                        page_count,
+                        genre,
+                        status,
+                        count) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """
+        self.storage.execute_row(
+            query,
+            (
+                book.isbn,
+                book.book_title,
+                book.auther_name,
+                book.publication_year,
+                book.page_count,
+                book.genre,
+                book.book_status.name,
+                book.count
+            )
+        )
+        print("\nData add successfully...\n")
 
     def update_book(self):
         ...

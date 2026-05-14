@@ -1,15 +1,14 @@
 import sqlite3
 
-
 class SqliteStorage:
 
     def __init__(self):
-        self.sqLite_db_path = "../../data/sqLite.db"
+        self.sqLite_db_path = "D:\\code\\Python\\library_project\\data\\sqLite.db"
 
     def connect(self):
         return sqlite3.connect(self.sqLite_db_path)
     
-    def execute(self, query, params=()):
+    def execute_row(self, query, params=()):
         connection = self.connect()
         cursor = connection.cursor()
         cursor.execute(query, params)
@@ -44,7 +43,8 @@ class SqliteStorage:
                 publication_year INTEGER,
                 page_count INTEGER,
                 genre TEXT,
-                status TEXT NOT NULL)"""
+                status TEXT NOT NULL,
+                count INTEGER)"""
         )
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS members (
@@ -56,7 +56,7 @@ class SqliteStorage:
                 join_date TEXT)"""
         )
         cursor.execute(
-            """CREATE TABLE loans (
+            """CREATE TABLE IF NOT EXISTS loans (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 member_id INTEGER NOT NULL,
                 book_id INTEGER NOT NULL,
@@ -66,6 +66,7 @@ class SqliteStorage:
                 FOREIGN KEY(book_id)
                     REFERENCES books(id))"""
         )
+        connection.close()
 
 start = SqliteStorage()
 start.creat_table()

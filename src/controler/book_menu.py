@@ -4,6 +4,7 @@ from src.models.loan import Loan
 from src.models.status import *
 # from src.services.csv_services import orchestration
 from src.repositories.csv_repository import *
+from src.repositories.sqlite_repository import *
 
 # Adds a new book to CSV
 # - Takes user input for all book fields
@@ -34,6 +35,10 @@ def add_book(chosen_db):
             count)
     if chosen_db == "1":
         save_book_in_csv(book)
+    elif chosen_db == "2":
+        add = BookRepository()
+        add.save_book(book)
+
     
 
 # Searches books in CSV based on selected field
