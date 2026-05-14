@@ -78,6 +78,9 @@ def search_book(chosen_db):
             value = input("\nEnter search value: ")
             if chosen_db == "1":
                 search_book_in_csv(int(user_input), value)
+            elif chosen_db == "2":
+                search = BookRepository()
+                search.search_book(search_fields[user_input], value)
         elif user_input == "0":
             return
         else:

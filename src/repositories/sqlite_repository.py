@@ -5,8 +5,20 @@ class BookRepository:
         self.storage = SqliteStorage()
 
     # NOTE: book func...:
-    def search_book(self):
-        ...
+    def search_book(self, column, value):
+        allowed_column = ["id", "isbn", "book_title", "author_name", "publication_year", "page_count", "genre", "book_status", "count"]
+
+        if column not in allowed_column:
+            raise ValueError("Invalide Value...!")
+        
+        query = f"""
+                    SELECT *
+                    FROM books
+                    WHERE {column} LIKE ?
+                """
+        results = self.storage.fetch_all(query, (f"%{value}%",))
+        print(results)
+
 
     def save_book(self, book):
         query = """
