@@ -45,6 +45,7 @@ class BookRepository:
         )
         print("\nBook added successfully...\n")
 
+    # TODO :                                                                                    
     def update_book(self):
         ...
 
@@ -100,6 +101,7 @@ class MemberRepository:
         )
         print("\nMember added successfully...\n")
 
+    # TODO :                                                                                    
     def update_member(self):
         ...
 
@@ -120,7 +122,7 @@ class LoanRepository:
     def __init__(self, sqlite_storage):
         self.storage = sqlite_storage
 
-    # NOTE: loan func...:
+    # TODO :                                                                                    
     def search_loan(self):
         ...
 
