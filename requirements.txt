@@ -1,0 +1,6 @@
+pandas
+python-dotenv
+mysql-connector-python
+
+
+pip install -r requirements.txt

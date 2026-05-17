@@ -66,7 +66,40 @@ class SqliteStorage:
                 FOREIGN KEY(book_id)
                     REFERENCES books(id))"""
         )
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS app_metadata (
+                key_name VARCHAR(50) PRIMARY KEY,
+                value TEXT NOT NULL
+            )
+            """
+        )
+        connection.commit()
         connection.close()
 
-# start = SqliteStorage()
-# start.creat_table()
+    def is_setup_completed(self):
+        connection = self.connect()
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            SELECT value
+            FROM app_metadata
+            WHERE key_name = 'setup_completed'
+        """)
+        row = cursor.fetchone()
+        connection.close()
+
+        return row is not None and row[0] == "true"
+        
+    def mark_setup_completed(self):
+        connection = self.connect()
+        cursor = connection.cursor()
+        cursor.execute("""
+            INSERT OR REPLACE INTO app_metadata (key_name, value)
+            VALUES ('setup_completed', 'true')
+        """)
+        connection.commit()
+        connection.close()
+
+start = SqliteStorage()
+start.mark_setup_completed()

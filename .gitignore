@@ -2,6 +2,7 @@ __pycache__/
 venv/
 .idea/
 .vscode/
+.env
 
 *.pyc
 *.db
@@ -9,6 +10,5 @@ venv/
 
 data/
 env/
-test.py
-generate_key.py
-src/repositories/base_repository.py
+test/
+base_repository.py

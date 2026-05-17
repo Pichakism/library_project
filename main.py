@@ -1,8 +1,15 @@
 from src.models.books import Book
 from src.storages.sqlite_storage import SqliteStorage
+from src.storages.mysql_storage import MySqlStorage
 from src.controler.book_menu import book_managment
 from src.controler.member_menu import member_managment
 from src.repositories.sqlite_repository import *
+from src.bootstrap import Bootstrap
+
+
+bootstrap = Bootstrap(MySqlStorage())
+storage = bootstrap.run()
+print("Application started...")
 
 # Main entry point of the program
 # - Shows the starter menu to the user
