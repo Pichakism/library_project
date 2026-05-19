@@ -6,6 +6,7 @@ from src.models.status import *
 from src.repositories.csv_repository import *
 from src.repositories import sqlite_repository
 from src.repositories import csv_repository
+from src.repositories import mysql_repository
 
 # Adds a new book to CSV
 # - Takes user input for all book fields
@@ -40,6 +41,9 @@ def add_book(chosen_db):
     elif chosen_db == "2":
         add = sqlite_repository.BookRepository()
         add.save_book(book)
+    elif chosen_db == "3":
+        add = mysql_repository.BookRepositort()
+        add.save_book(book)
 
     
 
@@ -52,7 +56,7 @@ def search_book(chosen_db):
         search_fields = {
             "1": "isbn",
             "2": "book_title",
-            "3": "auther_name",
+            "3": "author_name",
             "4": "publication_year",
             "5": "page_count",
             "6": "genre",
@@ -83,6 +87,9 @@ def search_book(chosen_db):
                 search.search_book_in_csv(int(user_input), value)
             elif chosen_db == "2":
                 search = sqlite_repository.BookRepository()
+                search.search_book(search_fields[user_input], value)
+            elif chosen_db == "3":
+                search = mysql_repository.BookRepositort()
                 search.search_book(search_fields[user_input], value)
         elif user_input == "0":
             return
@@ -129,7 +136,7 @@ def remove_book(chosen_db):
     search_fields = {
             "1": "isbn",
             "2": "book_title",
-            "3": "auther_name",
+            "3": "author_name",
             "4": "publication_year",
             "5": "page_count",
             "6": "genre",
@@ -166,6 +173,9 @@ def remove_book(chosen_db):
                 delete.remove_book_in_csv(search_column, search_value)
             elif chosen_db == "2":
                 delete = sqlite_repository.BookRepository()
+                delete.delete_book(search_fields[str(search_column)], search_value)
+            elif chosen_db == "3":
+                delete = mysql_repository.BookRepositort()
                 delete.delete_book(search_fields[str(search_column)], search_value)
 
 """def add_loan(chosen_db):
@@ -242,6 +252,7 @@ def book_managment():
             "\nWhat Database do you want?\n"
             "1 - CSV\n"
             "2 - sqLite\n"
+            "3 - mySql\n"
             )
         database_chosen = input("\nEnter number of your request: ")
         if user_input == "1":

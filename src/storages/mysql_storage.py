@@ -43,10 +43,7 @@ class MySqlStorage:
     def fetch_all(self, query, params=()):
         connection = self.connect()
         cursor = connection.cursor()
-        cursor.execute(
-            query,
-            params
-        )
+        cursor.execute(query, params)
         rows = cursor.fetchall()
         connection.close()
         return rows
@@ -59,12 +56,12 @@ class MySqlStorage:
             CREATE TABLE IF NOT EXISTS books (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 isbn VARCHAR(50) UNIQUE NOT NULL,
-                title VARCHAR(255) NOT NULL,
+                book_title VARCHAR(255) NOT NULL,
                 author_name VARCHAR(255) NOT NULL,
                 publication_year INT,
                 page_count INT,
                 genre VARCHAR(100),
-                status VARCHAR(50) NOT NULL,
+                book_status VARCHAR(50) NOT NULL,
                 count INTEGER
             )
             """

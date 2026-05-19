@@ -59,7 +59,7 @@ class BookRepository:
                     DELETE FROM books
                     WHERE {column} = ?
                 """
-        results = self.storage.execute_row(query, (value,))
+        self.storage.execute_row(query, (value,))
         print("\nBook deleted successfully...\n")
 
 class MemberRepository:
