@@ -46,8 +46,18 @@ class BookRepository:
         print("\nBook added successfully...\n")
 
     # TODO :                                                                                    
-    def update_book(self):
-        ...
+    def update_book(self, column, value, updates):
+        set_clause = ", ".join(
+            f"{column} = %s"
+            for column in updates
+        )
+        query = f"""
+            UPDATE books
+            SET {set_clause}
+            WHERE {column} = %s
+        """
+        params = (tuple(updates.values()) + (value,))
+        self.storage.execute(query, params)
 
     def delete_book(self, column, value):
         allowed_column = ["id", "isbn", "book_title", "author_name", "publication_year", "page_count", "genre", "book_status", "count"]
@@ -102,8 +112,18 @@ class MemberRepository:
         print("\nMember added successfully...\n")
 
     # TODO :                                                                                    
-    def update_member(self):
-        ...
+    def update_member(self, column, value, updates):
+        set_clause = ", ".join(
+            f"{column} = %s"
+            for column in updates
+        )
+        query = f"""
+            UPDATE books
+            SET {set_clause}
+            WHERE {column} = %s
+        """
+        params = (tuple(updates.values()) + (value,))
+        self.storage.execute(query, params)
 
     def delete_member(self, column, value):
         allowed_column = ["id", "first_name", "last_name", "phone_number", "member_status", "date"]
@@ -118,19 +138,54 @@ class MemberRepository:
         results = self.storage.execute_row(query, (value,))
         print("\nMember deleted successfully...\n")
 
-class LoanRepository:
-    def __init__(self, sqlite_storage):
-        self.storage = sqlite_storage
-
     # TODO :                                                                                    
-    def search_loan(self):
-        ...
+class LoanRepository:
+    def __init__(self):
+        self.storage = SqliteStorage()
 
-    def save_loan(self):
-        ...
+    def search_loan(self, column, value):
+        allowed_column = ["id", "book_id", "member_id", "loan_date"]
+
+        if column not in allowed_column:
+            raise ValueError("Invalide Value...!")
+        
+        query = f"""
+                    SELECT *
+                    FROM loans
+                    WHERE {column} LIKE ?
+                """
+        results = self.storage.fetch_all(query, (f"%{value}%",))
+        print(results)
+
+    def save_loan(self, loan):
+        query = """INSERT INTO loans(
+                    member_id,
+                    book_id,
+                    loan_date) VALUES (%s, %s, %s)
+                """
+        self.storage.execute_row(
+            query,
+            (
+                loan.member_id,
+                loan.book_id,
+                loan.loan_date
+            )
+        )
+        print("\nloan added successfully...\n")
     
     def update_loan(self):
         ...
 
-    def delete_loan(self):
-        ...
+    def delete_loan(self, column, value):
+        allowed_column = ["id", "book_id", "member_id", "loan_date"]
+
+        if column not in allowed_column:
+            raise ValueError("Invalide Value...!")
+        
+        query = f"""
+                    DELETE
+                    FROM loans
+                    WHERE {column} = ?
+                """
+        results = self.storage.fetch_all(query, (value,))
+        print(results)

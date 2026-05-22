@@ -5,6 +5,7 @@ from src.models.members import Member
 from src.models.status import Member_Status
 from src.repositories import sqlite_repository
 from src.repositories import csv_repository
+from src.repositories import mysql_repository
 
 # Adds a new member to CSV
 # - Gets member info from user input
@@ -26,6 +27,9 @@ def add_member(chosen_db):
         add.save_member_in_csv(member)
     elif chosen_db == "2":
         add = sqlite_repository.MemberRepository()
+        add.save_member(member)
+    elif chosen_db == "3":
+        add = mysql_repository.MemberRepository()
         add.save_member(member)
 
 # Searches members in CSV based on selected field
@@ -60,6 +64,9 @@ def search_member(chosen_db):
                 search.search_member_in_csv(search_fields[user_input], value)
             elif chosen_db == "2":
                 search = sqlite_repository.MemberRepository()
+                search.search_member(search_fields[user_input], value)
+            elif chosen_db == "3":
+                search = mysql_repository.MemberRepository()
                 search.search_member(search_fields[user_input], value)
         elif user_input == "0":
             return
@@ -132,6 +139,9 @@ def remove_member(chosen_db):
             elif chosen_db == "2":
                 delete = sqlite_repository.MemberRepository()
                 delete.delete_member(search_fields[str(search_column)], search_value)
+            elif chosen_db == "3":
+                delete = mysql_repository.MemberRepository()
+                delete.delete_member(search_fields[str(search_column)], search_value)
 
 # Main menu for member management
 # - Routes user to add, search, edit, or remove member operations
@@ -153,6 +163,7 @@ def member_managment():
             "\nWhat Database do you want?\n"
             "1 - CSV\n"
             "2 - sqLite\n"
+            "3 - mySql\n"
             )
         database_chosen = input("\n\nEnter number of your request: ")
         if user_input == "1":

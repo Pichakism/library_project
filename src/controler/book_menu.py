@@ -230,6 +230,10 @@ def loan_book(chosen_db):
                     search_column_for_member,
                     search_value_for_member
                     )
+            elif chosen_db == "2":
+                ... # TODO:         
+            elif chosen_db == "3":
+                ... # TODO:         
 
 # Main book management menu
 # - Routes user to add, search, edit, or remove book functions
@@ -242,7 +246,7 @@ def book_managment():
             "2 - Search a Book\n"
             "3 - Edit a Book\n"
             "4 - Remove a Book\n"
-            "5 - Loan Book\n"
+            "5 - Loan a Book\n"
             "0 - Back...\n\n"
             "Enter your request: "))
         if user_input == "0":
