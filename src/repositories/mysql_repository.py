@@ -63,8 +63,8 @@ class BookRepositort:
     # TODO :                                                                                    
     def update_book(self, column, value, updates):
         set_clause = ", ".join(
-            f"{column} = %s"
-            for column in updates
+            f"{field} = %s"
+            for field in updates
         )
         query = f"""
             UPDATE books
