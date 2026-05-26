@@ -63,9 +63,9 @@ class BookRepository:
         if file_exists:
             new_id = self.storage._get_last_id(self.file_path) + 1
             self.storage.add_book_to_csv(self.file_path, book, new_id)
-            print(f"\nBook \"{book.book_title}\" saved Successfully...")
+            return f"\nBook \"{book.book_title}\" saved Successfully..."
         else:
-            print("\nFile Not Found...!")
+            return "\nFile Not Found...!"
 
     # Searches books in book DataFrame based on selected column and value
     # - Uses find_rows() for filtering

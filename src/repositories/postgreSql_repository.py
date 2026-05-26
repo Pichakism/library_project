@@ -1,24 +1,34 @@
-from src.storages.mysql_storage import MySqlStorage
+from src.storages.postgreSql_storage import PostgreSqlStorage
 
 class BookRepository:
     def __init__(self):
-        self.storage = MySqlStorage()
+        self.storage = PostgreSqlStorage()
 
     def search_book(self, column, value):
         allowed_column = ["id", "isbn", "book_title", "author_name",
                           "publication_year", "page_count", "genre",
                           "book_status", "physical_version", "digital_version", "count"]
+        numeric_columns = ["id", "publication_year", "page_count", "count"]
 
         if column not in allowed_column:
             raise ValueError("Invalide Value...")
         
-        query = f"""
-                    SELECT *
-                    FROM books
-                    WHERE {column} LIKE %s
-                """
+        if column in numeric_columns:
+            query = f"""
+                SELECT *
+                FROM members
+                WHERE {column} = %s
+            """
+            params = (value,)
+        else:
+            query = f"""
+                SELECT *
+                FROM members
+                WHERE {column} LIKE %s
+            """
+            params = (f"%{value}%",)
         
-        results = self.storage.fetch_all(query, (f"%{value}%",))
+        results = self.storage.fetch_all(query, params)
         print(results)
 
     def save_book(self, book):
@@ -56,16 +66,27 @@ class BookRepository:
         allowed_column = ["id", "isbn", "book_title", "author_name",
                           "publication_year", "page_count", "genre",
                           "book_status", "physical_version", "digital_version", "count"]
+        numeric_columns = ["id", "publication_year", "page_count", "count"]
 
         if column not in allowed_column:
             raise ValueError("Invalide Value...")
         
-        query = f"""
-                    DELETE FROM books
-                    WHERE {column} = %s
-                """
+        if column in numeric_columns:
+            query = f"""
+                SELECT *
+                FROM members
+                WHERE {column} = %s
+            """
+            params = (value,)
+        else:
+            query = f"""
+                SELECT *
+                FROM members
+                WHERE {column} LIKE %s
+            """
+            params = (f"%{value}%",)
         
-        self.storage.execute(query, (value,))
+        self.storage.execute(query, params)
         print("\nBook deleted successfully...\n")
 
     # TODO :                                                                                    
@@ -84,21 +105,30 @@ class BookRepository:
 
 class MemberRepository:
     def __init__(self):
-        self.storage = MySqlStorage()
+        self.storage = PostgreSqlStorage()
 
     def search_member(self, column, value):
-        allowed_column = ["id", "first_name", "last_name", "phone_number", "status", "join_date"]
+        allowed_column = ["id", "first_name", "last_name", "phone_number", "member_status", "join_date"]
 
         if column not in allowed_column:
             raise ValueError("Invalide value...!")
         
-        query = f"""
-                    SELECT *
-                    FROM members
-                    WHERE {column} LIKE %s
-                """
+        if column == "id":
+            query = f"""
+                        SELECT *
+                        FROM members
+                        WHERE {column} = %s
+                    """
+            params = (value,)
+        else:
+            query = f"""
+                        SELECT *
+                        FROM members
+                        WHERE {column} LIKE %s
+                    """
+            params = (f"%{value}%",)
         
-        result = self.storage.fetch_all(query, (f"%{value}%",))
+        result = self.storage.fetch_all(query, params)
         print(result)
 
     def save_member(self, member):
@@ -108,7 +138,7 @@ class MemberRepository:
                         last_name,
                         phone_number,
                         status,
-                        join_date) VALUES (%s, %s, %s, %s, %s)
+                        date) VALUES (%s, %s, %s, %s, %s)
                 """
         self.storage.execute(
             query,
@@ -123,8 +153,8 @@ class MemberRepository:
         print("\nMember added successfully...\n")
 
     def delete_member(self, column, value):
-        allowed_column = ["id", "first_name", "last_name", "phone_number", "status", "join_date"]
-
+        allowed_column = ["id", "first_name", "last_name", "phone_number", "member_status", "date"]
+        print(column, type(column))
         if column not in allowed_column:
             raise ValueError("Invalide value...!")
         
@@ -139,11 +169,11 @@ class MemberRepository:
     # TODO :                                                                                    
     def update_member(self, column, value, updates):
         set_clause = ", ".join(
-            f"{column} = %s"
-            for column in updates
+            f"{field} = %s"
+            for field in updates
         )
         query = f"""
-            UPDATE books
+            UPDATE members
             SET {set_clause}
             WHERE {column} = %s
         """
@@ -153,7 +183,7 @@ class MemberRepository:
     # TODO :                                                                                    
 class LoanRepository:
     def __init__(self):
-        self.storage = MySqlStorage()
+        self.storage = PostgreSqlStorage()
 
     def search_loan(self, column, value):
         allowed_column = ["id", "book_id", "member_id", "loan_date"]
@@ -199,5 +229,5 @@ class LoanRepository:
                     FROM loans
                     WHERE {column} = ?
                 """
-        results = self.storage.fetch_all(query, (value,))
+        results = self.storage.execute(query, (value,))
         print(results)

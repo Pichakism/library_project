@@ -7,6 +7,8 @@ from src.repositories.csv_repository import *
 from src.repositories import sqlite_repository
 from src.repositories import csv_repository
 from src.repositories import mysql_repository
+from src.repositories import postgreSql_repository
+from src.repositories import sqlServer_repository
 
 # Adds a new book to CSV
 # - Takes user input for all book fields
@@ -42,9 +44,14 @@ def add_book(chosen_db):
         add = sqlite_repository.BookRepository()
         add.save_book(book)
     elif chosen_db == "3":
-        add = mysql_repository.BookRepositort()
+        add = mysql_repository.BookRepository()
         add.save_book(book)
-
+    elif chosen_db == "4":
+        add = postgreSql_repository.BookRepository()
+        add.save_book(book)
+    elif chosen_db == "5":
+        add = sqlServer_repository.BookRepository()
+        add.save_book(book)
     
 
 # Searches books in CSV based on selected field
@@ -89,7 +96,13 @@ def search_book(chosen_db):
                 search = sqlite_repository.BookRepository()
                 search.search_book(search_fields[user_input], value)
             elif chosen_db == "3":
-                search = mysql_repository.BookRepositort()
+                search = mysql_repository.BookRepository()
+                search.search_book(search_fields[user_input], value)
+            elif chosen_db == "4":
+                search = postgreSql_repository.BookRepository()
+                search.search_book(search_fields[user_input], value)
+            elif chosen_db == "5":
+                search = sqlServer_repository.BookRepository()
                 search.search_book(search_fields[user_input], value)
         elif user_input == "0":
             return
@@ -175,7 +188,13 @@ def remove_book(chosen_db):
                 delete = sqlite_repository.BookRepository()
                 delete.delete_book(search_fields[str(search_column)], search_value)
             elif chosen_db == "3":
-                delete = mysql_repository.BookRepositort()
+                delete = mysql_repository.BookRepository()
+                delete.delete_book(search_fields[str(search_column)], search_value)
+            elif chosen_db == "4":
+                delete = postgreSql_repository.BookRepository()
+                delete.delete_book(search_fields[str(search_column)], search_value)
+            elif chosen_db == "5":
+                delete = sqlServer_repository.BookRepository()
                 delete.delete_book(search_fields[str(search_column)], search_value)
 
 """def add_loan(chosen_db):
@@ -257,6 +276,8 @@ def book_managment():
             "1 - CSV\n"
             "2 - sqLite\n"
             "3 - mySql\n"
+            "4 - postgreSql\n"
+            "5 - SQL Server\n"
             )
         database_chosen = input("\nEnter number of your request: ")
         if user_input == "1":

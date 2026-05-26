@@ -6,6 +6,8 @@ from src.models.status import Member_Status
 from src.repositories import sqlite_repository
 from src.repositories import csv_repository
 from src.repositories import mysql_repository
+from src.repositories import postgreSql_repository
+from src.repositories import sqlServer_repository
 
 # Adds a new member to CSV
 # - Gets member info from user input
@@ -30,6 +32,12 @@ def add_member(chosen_db):
         add.save_member(member)
     elif chosen_db == "3":
         add = mysql_repository.MemberRepository()
+        add.save_member(member)
+    elif chosen_db == "4":
+        add = postgreSql_repository.MemberRepository()
+        add.save_member(member)
+    elif chosen_db == "5":
+        add = sqlServer_repository.MemberRepository()
         add.save_member(member)
 
 # Searches members in CSV based on selected field
@@ -59,6 +67,8 @@ def search_member(chosen_db):
             "Enter: ")
         if user_input in search_fields:
             value = input("\nEnter search value: ")
+            if user_input == "1":
+                value = int(value)
             if chosen_db == "1":
                 search = csv_repository.MemberRepository()
                 search.search_member_in_csv(search_fields[user_input], value)
@@ -67,6 +77,12 @@ def search_member(chosen_db):
                 search.search_member(search_fields[user_input], value)
             elif chosen_db == "3":
                 search = mysql_repository.MemberRepository()
+                search.search_member(search_fields[user_input], value)
+            elif chosen_db == "4":
+                search = postgreSql_repository.MemberRepository()
+                search.search_member(search_fields[user_input], value)
+            elif chosen_db == "5":
+                search = sqlServer_repository.MemberRepository()
                 search.search_member(search_fields[user_input], value)
         elif user_input == "0":
             return
@@ -133,6 +149,9 @@ def remove_member(chosen_db):
             print("ERROR: Column is not valid!")
             continue
         else:
+            if search_column == 1:
+                search_value = int(search_value)
+            print(search_value, type(search_value))
             if chosen_db == "1":
                 delete = csv_repository.MemberRepository()
                 delete.remove_member_in_csv(search_column, search_value)
@@ -141,6 +160,12 @@ def remove_member(chosen_db):
                 delete.delete_member(search_fields[str(search_column)], search_value)
             elif chosen_db == "3":
                 delete = mysql_repository.MemberRepository()
+                delete.delete_member(search_fields[str(search_column)], search_value)
+            elif chosen_db == "4":
+                delete = postgreSql_repository.MemberRepository()
+                delete.delete_member(search_fields[str(search_column)], search_value)
+            elif chosen_db == "5":
+                delete = sqlServer_repository.MemberRepository()
                 delete.delete_member(search_fields[str(search_column)], search_value)
 
 # Main menu for member management
@@ -164,6 +189,8 @@ def member_managment():
             "1 - CSV\n"
             "2 - sqLite\n"
             "3 - mySql\n"
+            "4 - postgreSql\n"
+            "5 - SQL Server\n"
             )
         database_chosen = input("\n\nEnter number of your request: ")
         if user_input == "1":
