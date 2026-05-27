@@ -31,14 +31,14 @@ class SqliteStorage:
         connection.close()
         return rows
 
-    def creat_table(self):
+    def create_tables(self):
         connection = self.connect()
         cursor = connection.cursor()
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS books (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 isbn TEXT UNIQUE NOT NULL,
-                title TEXT NOT NULL,
+                book_title TEXT NOT NULL,
                 author_name TEXT NOT NULL,
                 publication_year INTEGER,
                 page_count INTEGER,
@@ -67,12 +67,9 @@ class SqliteStorage:
                     REFERENCES books(id))"""
         )
         cursor.execute(
-            """
-            CREATE TABLE IF NOT EXISTS app_metadata (
+            """CREATE TABLE IF NOT EXISTS app_metadata (
                 key_name VARCHAR(50) PRIMARY KEY,
-                value TEXT NOT NULL
-            )
-            """
+                value TEXT NOT NULL)"""
         )
         connection.commit()
         connection.close()

@@ -9,6 +9,21 @@ from src.repositories import csv_repository
 from src.repositories import mysql_repository
 from src.repositories import postgreSql_repository
 from src.repositories import sqlServer_repository
+from src.services import sqlite_service
+
+
+book_fields = {
+    "1": "isbn",
+    "2": "book_title",
+    "3": "author_name",
+    "4": "publication_year",
+    "5": "page_count",
+    "6": "genre",
+    "7": "book_status",
+    "8": "physical_version",
+    "9": "digital_version",
+    "10": "count"
+}
 
 # Adds a new book to CSV
 # - Takes user input for all book fields
@@ -53,26 +68,9 @@ def add_book(chosen_db):
         add = sqlServer_repository.BookRepository()
         add.save_book(book)
     
-
-# Searches books in CSV based on selected field
-# - Shows search menu
-# - Takes search column + value
-# - Calls search_book() from services
-def search_book(chosen_db):
+def user_input_for_search_or_update():
     while True:
-        search_fields = {
-            "1": "isbn",
-            "2": "book_title",
-            "3": "author_name",
-            "4": "publication_year",
-            "5": "page_count",
-            "6": "genre",
-            "7": "book_status",
-            "8": "physical_version",
-            "9": "digital_version",
-            "10": "count",
-        }
-        user_input = input(
+        search_column = int(input(
             "\n-----Search Book Menu-----\n"
             "How do you want to search?\n"
             "1 - By ISBN\n"
@@ -86,60 +84,61 @@ def search_book(chosen_db):
             "9 - Digital version\n"
             "10 - count\n"
             "0 - Back...\n\n"
-            "Enter: ")
-        if user_input in search_fields:
-            value = input("\nEnter search value: ")
-            if chosen_db == "1":
-                search = csv_repository.BookRepository()
-                search.search_book_in_csv(int(user_input), value)
-            elif chosen_db == "2":
-                search = sqlite_repository.BookRepository()
-                search.search_book(search_fields[user_input], value)
-            elif chosen_db == "3":
-                search = mysql_repository.BookRepository()
-                search.search_book(search_fields[user_input], value)
-            elif chosen_db == "4":
-                search = postgreSql_repository.BookRepository()
-                search.search_book(search_fields[user_input], value)
-            elif chosen_db == "5":
-                search = sqlServer_repository.BookRepository()
-                search.search_book(search_fields[user_input], value)
-        elif user_input == "0":
+            "Enter: "))
+        if search_column == 0:
             return
+        search_value = input("\nWhat is the desired value to search for? : ")
+        if search_column not in range(1, 10):
+            print("ERROR: Column is not valid!")
+            continue
         else:
-            print("Invalid choice!")
+            return search_column, search_value
+
+# Searches books in CSV based on selected field
+# - Shows search menu
+# - Takes search column + value
+# - Calls search_book() from services
+def search_book(chosen_db):
+        column, values = user_input_for_search_or_update()
+        if chosen_db == "1":
+            search = csv_repository.BookRepository()
+            search.search_book_in_csv(book_fields[str(column)], values)
+        elif chosen_db == "2":
+            search = sqlite_service.SqLiteService()
+            return search.search_book(book_fields[str(column)], values), book_fields[str(column)], values
+        elif chosen_db == "3":
+            search = mysql_repository.BookRepository()
+            search.search_book(book_fields[str(column)], values)
+        elif chosen_db == "4":
+            search = postgreSql_repository.BookRepository()
+            search.search_book(book_fields[str(column)], values)
+        elif chosen_db == "5":
+            search = sqlServer_repository.BookRepository()
+            search.search_book(book_fields[str(column)], values)
     
 # Edits an existing book record in CSV
 # - Selects column to search
 # - Gets search value
 # - Calls edit_book() to update matched record
 def edit_book(chosen_db):
-    while True:
-        search_column = int(input(
-            "\n-----Edit Book Menu-----\n"
-            "\n1 - ISBN"
-            "\n2 - Book Title"
-            "\n3 - Auter Name"
-            "\n4 - Publication Year"
-            "\n5 - Page Count"
-            "\n6 - Genre"
-            "\n7 - Book Status"
-            "\n8 - Physical Version"
-            "\n9 - Digital Version"
-            "\n10 - Count"
-            "\n0 - Back"
-            "\n\nWhich column should we search based on? : "))
-        if search_column == 0:
+    if chosen_db == "1":
+        edit = csv_repository.BookRepository()
+        edit.search_book_in_csv(book_fields[str(column)], values)
+    elif chosen_db == "2":
+        data, column, value = search_book(chosen_db)
+        if not data:
+            print("No books found!")
             return
-        search_value = input("\nWhat is the desired value to search for? : ")
-
-        if search_column not in range(1, 10):
-            print("ERROR: Column is not valid!")
-            continue
-        else:
-            if chosen_db == "1":
-                edit = csv_repository.BookRepository()
-                edit.search_book_in_csv(search_column, search_value)
+        sqlite_service.SqLiteService().update_book(data, column, value)
+    elif chosen_db == "3":
+        edit = mysql_repository.BookRepository()
+        edit.search_book(book_fields[str(column)], values)
+    elif chosen_db == "4":
+        edit = postgreSql_repository.BookRepository()
+        edit.search_book(book_fields[str(column)], values)
+    elif chosen_db == "5":
+        edit = sqlServer_repository.BookRepository()
+        edit.search_book(book_fields[str(column)], values)
 
 # Removes a book from CSV
 # - Selects column to search

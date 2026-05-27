@@ -8,7 +8,6 @@ class MySqlStorage:
         self.user = MySqlConfig.DB_USER
         self.password = MySqlConfig.DB_PASSWORD
         self.database = MySqlConfig.DB_NAME
-        self.creat_tables()
 
     def connect(self):
         return mysql.connector.connect(
@@ -36,7 +35,7 @@ class MySqlStorage:
                 cursor.execute(query, params)
                 return cursor.fetchall()
     
-    def creat_tables(self):
+    def create_tables(self):
         with self.connect() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(

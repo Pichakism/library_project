@@ -8,7 +8,6 @@ class PostgreSqlStorage:
         self.user = PostgreSqlConfig.DB_USER
         self.password = PostgreSqlConfig.DB_PASSWORD
         self.database = PostgreSqlConfig.DB_NAME
-        self.create_tables()
 
     def connect(self):
         return psycopg2.connect(

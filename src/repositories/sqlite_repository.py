@@ -20,13 +20,14 @@ class BookRepository:
             results = self.storage.fetch_all(query, (f"%{value}%",))
             return results
         except Exception as e:
-            raise ConnectionError("ERROR: DB Connection Failed...!")
+            print("SQL ERROR:", e)
+            raise
 
     def save_book(self, book):
         query = """
             INSERT INTO books (
                 isbn,
-                title,
+                book_title,
                 author_name,
                 publication_year,
                 page_count,
@@ -55,17 +56,19 @@ class BookRepository:
 
     # TODO :                                                                                    
     def update_book(self, column, value, updates):
-        set_clause = ", ".join(f"{column} = %s" for column in updates)
+        set_clause = ", ".join(f"{field} = ?" for field in updates)
         query = f"""
             UPDATE books
             SET {set_clause}
-            WHERE {column} = %s
+            WHERE {column} = ?
         """
         params = (tuple(updates.values()) + (value,))
         try:
             self.storage.execute_row(query, params)
+            return "\nBook updated successfully...\n"
         except Exception as e:
-            raise ConnectionError("ERROR: DB Connection Failed...!")
+            print("SQL ERROR:", e)
+            raise
 
     def delete_book(self, column, value):
         allowed_column = ["id", "isbn", "book_title", "author_name", "publication_year", "page_count", "genre", "book_status", "count"]

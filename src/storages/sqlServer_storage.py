@@ -10,7 +10,6 @@ class SqlServerStorage:
         self.password = SqlServerConfig.DB_PASSWORD
         self.database = SqlServerConfig.DB_NAME
         self.driver = SqlServerConfig.DB_DRIVER
-        self.create_tables()
 
     def connect(self):
         connection_str = (
