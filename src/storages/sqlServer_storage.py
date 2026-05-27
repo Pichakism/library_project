@@ -13,7 +13,7 @@ class SqlServerStorage:
         self.create_tables()
 
     def connect(self):
-        conn_str = (
+        connection_str = (
             f"DRIVER={{{self.driver}}};"
             f"SERVER={self.server},{self.port};"
             f"DATABASE={self.database};"
@@ -21,29 +21,29 @@ class SqlServerStorage:
             f"PWD={self.password};"
             "TrustServerCertificate=yes;"
         )
-        return pyodbc.connect(conn_str)
+        return pyodbc.connect(connection_str)
 
     def execute(self, query, params=()):
-        with self.connect() as conn:
-            with conn.cursor() as cursor:
+        with self.connect() as connection:
+            with connection.cursor() as cursor:
                 cursor.execute(query, params)
-            conn.commit()
+            connection.commit()
 
     def fetch_one(self, query, params=()):
-        with self.connect() as conn:
-            with conn.cursor() as cursor:
+        with self.connect() as connection:
+            with connection.cursor() as cursor:
                 cursor.execute(query, params)
                 return cursor.fetchone()
 
     def fetch_all(self, query, params=()):
-        with self.connect() as conn:
-            with conn.cursor() as cursor:
+        with self.connect() as connection:
+            with connection.cursor() as cursor:
                 cursor.execute(query, params)
                 return cursor.fetchall()
 
     def create_tables(self):
-        with self.connect() as conn:
-            with conn.cursor() as cursor:
+        with self.connect() as connection:
+            with connection.cursor() as cursor:
 
                 cursor.execute("""
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='books' AND xtype='U')
@@ -94,11 +94,11 @@ class SqlServerStorage:
                 )
                 """)
 
-            conn.commit()
+            connection.commit()
 
     def is_setup_completed(self):
-        with self.connect() as conn:
-            with conn.cursor() as cursor:
+        with self.connect() as connection:
+            with connection.cursor() as cursor:
                 cursor.execute("""
                     SELECT value
                     FROM app_metadata
@@ -108,13 +108,13 @@ class SqlServerStorage:
                 return row is not None and row[0] == "true"
 
     def mark_setup_completed(self):
-        with self.connect() as conn:
-            with conn.cursor() as cursor:
+        with self.connect() as connection:
+            with connection.cursor() as cursor:
                 cursor.execute("""
                     INSERT INTO app_metadata (key_name, value)
                     VALUES ('setup_completed', 'true')
                 """)
-            conn.commit()
+            connection.commit()
 
 
 # start = SqlServerStorage()

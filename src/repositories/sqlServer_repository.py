@@ -30,9 +30,11 @@ class BookRepository:
                 WHERE {column} LIKE ?
             """
             params = (f"%{value}%",)
-
-        results = self.storage.fetch_all(query, params)
-        print(results)
+        try:
+            results = self.storage.fetch_all(query, params)
+            return results
+        except Exception as e:
+            raise ConnectionError("ERROR: DB Connection Failed...!")
 
     def save_book(self, book):
         query = """
@@ -50,22 +52,25 @@ class BookRepository:
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
 
-        self.storage.execute(
-            query,
-            (
-                book.isbn,
-                book.book_title,
-                book.auther_name,
-                book.publication_year,
-                book.page_count,
-                book.genre,
-                book.book_status.name,
-                book.physical_version.name,
-                book.digital_version.name,
-                book.count
+        try:
+            self.storage.execute(
+                query,
+                (
+                    book.isbn,
+                    book.book_title,
+                    book.auther_name,
+                    book.publication_year,
+                    book.page_count,
+                    book.genre,
+                    book.book_status.name,
+                    book.physical_version.name,
+                    book.digital_version.name,
+                    book.count
+                )
             )
-        )
-        print("\nBook added successfully...\n")
+            return "\nBook added successfully...\n"
+        except Exception as e:
+            raise ConnectionError("ERROR: DB Connection Failed...!")
 
     def delete_book(self, column, value):
         allowed_column = ["id", "isbn", "book_title", "author_name",
@@ -91,8 +96,11 @@ class BookRepository:
             """
             params = (f"%{value}%",)
 
-        self.storage.execute(query, params)
-        print("\nBook deleted successfully...\n")
+        try:
+            self.storage.execute(query, params)
+            return "\nBook deleted successfully...\n"
+        except Exception as e:
+            raise ConnectionError("ERROR: DB Connection Failed...!")
 
     def update_book(self, column, value, updates):
         set_clause = ", ".join(f"{field} = ?" for field in updates)
@@ -104,11 +112,11 @@ class BookRepository:
         """
 
         params = tuple(updates.values()) + (value,)
-        self.storage.execute(query, params)
-
-
-# ==========================
-
+        try:
+            self.storage.execute(query, params)
+        except Exception as e:
+            raise ConnectionError("ERROR: DB Connection Failed...!")
+        
 class MemberRepository:
     def __init__(self):
         self.storage = SqlServerStorage()
@@ -135,8 +143,11 @@ class MemberRepository:
             """
             params = (f"%{value}%",)
 
-        result = self.storage.fetch_all(query, params)
-        print(result)
+        try:
+            result = self.storage.fetch_all(query, params)
+            return result
+        except Exception as e:
+            raise ConnectionError("ERROR: DB Connection Failed...!")
 
     def save_member(self, member):
         query = """
@@ -149,17 +160,20 @@ class MemberRepository:
             ) VALUES (?, ?, ?, ?, ?)
         """
 
-        self.storage.execute(
-            query,
-            (
-                member.first_name,
-                member.last_name,
-                member.phone_number,
-                member.member_status.name,
-                member.date
+        try:
+            self.storage.execute(
+                query,
+                (
+                    member.first_name,
+                    member.last_name,
+                    member.phone_number,
+                    member.member_status.name,
+                    member.date
+                )
             )
-        )
-        print("\nMember added successfully...\n")
+            return "\nMember added successfully...\n"
+        except Exception as e:
+            raise ConnectionError("ERROR: DB Connection Failed...!")
 
     def delete_member(self, column, value):
         allowed_column = ["id", "first_name", "last_name",
@@ -173,8 +187,11 @@ class MemberRepository:
             WHERE {column} = ?
         """
 
-        self.storage.execute(query, (value,))
-        print("\nMember deleted successfully...\n")
+        try:
+            self.storage.execute(query, (value,))
+            return "\nMember deleted successfully...\n"
+        except Exception as e:
+            raise ConnectionError("ERROR: DB Connection Failed...!")
 
     def update_member(self, column, value, updates):
         set_clause = ", ".join(f"{field} = ?" for field in updates)
@@ -186,10 +203,10 @@ class MemberRepository:
         """
 
         params = tuple(updates.values()) + (value,)
-        self.storage.execute(query, params)
-
-
-# ==========================
+        try:
+            self.storage.execute(query, params)
+        except Exception as e:
+            raise ConnectionError("ERROR: DB Connection Failed...!")
 
 class LoanRepository:
     def __init__(self):
@@ -207,8 +224,11 @@ class LoanRepository:
             WHERE {column} LIKE ?
         """
 
-        results = self.storage.fetch_all(query, (f"%{value}%",))
-        print(results)
+        try:
+            results = self.storage.fetch_all(query, (f"%{value}%",))
+            return results
+        except Exception as e:
+            raise ConnectionError("ERROR: DB Connection Failed...!")
 
     def save_loan(self, loan):
         query = """
@@ -219,15 +239,18 @@ class LoanRepository:
             ) VALUES (?, ?, ?)
         """
 
-        self.storage.execute(
-            query,
-            (
-                loan.member_id,
-                loan.book_id,
-                loan.loan_date
+        try:
+            self.storage.execute(
+                query,
+                (
+                    loan.member_id,
+                    loan.book_id,
+                    loan.loan_date
+                )
             )
-        )
-        print("\nLoan added successfully...\n")
+            return "\nLoan added successfully...\n"
+        except Exception as e:
+            raise ConnectionError("ERROR: DB Connection Failed...!")
 
     def delete_loan(self, column, value):
         allowed_column = ["id", "book_id", "member_id", "loan_date"]
@@ -240,5 +263,8 @@ class LoanRepository:
             WHERE {column} = ?
         """
 
-        self.storage.execute(query, (value,))
-        print("\nLoan deleted successfully...\n")
+        try:
+            self.storage.execute(query, (value,))
+            return "\nLoan deleted successfully...\n"
+        except Exception as e:
+            raise ConnectionError("ERROR: DB Connection Failed...!")

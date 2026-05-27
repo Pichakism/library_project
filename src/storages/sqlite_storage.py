@@ -101,5 +101,5 @@ class SqliteStorage:
         connection.commit()
         connection.close()
 
-start = SqliteStorage()
-start.mark_setup_completed()
+# start = SqliteStorage()
+# start.mark_setup_completed()

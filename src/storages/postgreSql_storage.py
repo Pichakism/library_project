@@ -28,15 +28,13 @@ class PostgreSqlStorage:
         with self.connect() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, params)
-                row = cursor.fetchone()
-        return row
+                return cursor.fetchone()
     
     def fetch_all(self, query, params=()):
         with self.connect() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, params)
-                rows = cursor.fetchall()
-        return rows
+                return cursor.fetchall()
     
     def create_tables(self):
         with self.connect() as connection:
@@ -94,6 +92,7 @@ class PostgreSqlStorage:
                 )
                 """
                 )
+            connection.commit()
 
     def is_setup_completed(self):
         with self.connect() as connection:
@@ -105,7 +104,7 @@ class PostgreSqlStorage:
                     WHERE key_name = 'setup_completed'
                 """)
                 row = cursor.fetchone()
-        return row is not None and row[0] == "true"
+                return row is not None and row[0] == "true"
         
     def mark_setup_completed(self):
         with self.connect() as connection:
@@ -116,3 +115,4 @@ class PostgreSqlStorage:
                     VALUES ('setup_completed', 'true')
                     ON CONFLICT (key_name) DO UPDATE SET value = 'true'
                 """)
+            connection.commit()
