@@ -60,41 +60,7 @@ def add_loan(chosen_db):
 
     service = get_loan_service(chosen_db)
     print(service.insert_loan(loan))
-    
-    # while True:
-    #     search_column_for_book = int(input(
-    #         "\n-----Loan Book Menu-----\n"
-    #         "\n1 - ISBN"
-    #         "\n2 - Book Title"
-    #         "\n3 - Auter Name"
-    #         "\n4 - Publication Year"
-    #         "\n5 - Page Count"
-    #         "\n6 - Genre"
-    #         "\n7 - Book Status"
-    #         "\n8 - Physical Version"
-    #         "\n9 - Digital Version"
-    #         "\n10 - Count"
-    #         "\n0 - Back"
-    #         "\n\nWhich column should we search based on? : "))
-    #     if search_column_for_book == 0:
-    #         return
-    #     search_value_for_book = input("\nWhat is the desired value to search for? : ")
 
-    #     search_column_for_member = int(input(
-    #         "\n1 - ID"
-    #         "\n2 - First Name"
-    #         "\n3 - Last Name"
-    #         "\n4 - Phone Number"
-    #         "\n5 - Member Status"
-    #         "\n6 - Date of Join"
-    #         "\n\nWhich column should we search based on? : "))
-    #     search_value_for_member = input("\nWhat is the desired value to search for? : ")
-
-    #     if search_column_for_book not in range(1, 10) and search_column_for_member not in range(1, 6):
-    #         print("ERROR: Column is not valid!")
-    #         continue
-    #     else:
-    #         ...
 
 def user_input_for_search():
     while True:
