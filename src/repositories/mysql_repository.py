@@ -4,7 +4,7 @@ class BookRepository:
     def __init__(self):
         self.storage = MySqlStorage()
 
-    def search_book(self, column, value):
+    def select_book(self, column, value):
         allowed_column = ["id", "isbn", "book_title", "author_name",
                           "publication_year", "page_count", "genre",
                           "book_status", "physical_version", "digital_version", "count"]
@@ -24,7 +24,7 @@ class BookRepository:
             print("SQL ERROR:", e)
             raise
 
-    def save_book(self, book):
+    def insert_book(self, book):
         
         query = """
             INSERT INTO books (
@@ -45,7 +45,7 @@ class BookRepository:
                 (
                     book.isbn,
                     book.book_title,
-                    book.auther_name,
+                    book.author_name,
                     book.publication_year,
                     book.page_count,
                     book.genre,
@@ -100,7 +100,7 @@ class MemberRepository:
     def __init__(self):
         self.storage = MySqlStorage()
 
-    def search_member(self, column, value):
+    def select_member(self, column, value):
         allowed_column = ["id", "first_name", "last_name", "phone_number", "status", "join_date"]
 
         if column not in allowed_column:
@@ -119,7 +119,7 @@ class MemberRepository:
             print("SQL ERROR:", e)
             raise
 
-    def save_member(self, member):
+    def insert_member(self, member):
         query = """
             INSERT INTO members (
                 first_name,
@@ -136,7 +136,7 @@ class MemberRepository:
                     member.last_name,
                     member.phone_number,
                     member.member_status.name,
-                    member.date
+                    member.join_date
                 )
             )
             return "\nMember added successfully...\n"
@@ -185,7 +185,7 @@ class LoanRepository:
     def __init__(self):
         self.storage = MySqlStorage()
 
-    def search_loan(self, column, value):
+    def select_loan(self, column, value):
         allowed_column = ["id", "book_id", "member_id", "loan_date"]
 
         if column not in allowed_column:
@@ -204,7 +204,7 @@ class LoanRepository:
             print("SQL ERROR:", e)
             raise
 
-    def save_loan(self, loan):
+    def insert_loan(self, loan):
         query = """
             INSERT INTO loans(
             member_id,

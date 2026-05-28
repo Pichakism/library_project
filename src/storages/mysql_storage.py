@@ -101,17 +101,20 @@ class MySqlStorage:
         connection.close()
     
     def is_setup_completed(self):
-        connection = self.connect()
-        cursor = connection.cursor()
-        cursor.execute(
-        """
-            SELECT value
-            FROM app_metadata
-            WHERE key_name = 'setup_completed'
-        """)
-        row = cursor.fetchone()
-        connection.close()
-        return row is not None and row[0] == "true"
+        try:
+            connection = self.connect()
+            cursor = connection.cursor()
+            cursor.execute(
+            """
+                SELECT value
+                FROM app_metadata
+                WHERE key_name = 'setup_completed'
+            """)
+            row = cursor.fetchone()
+            connection.close()
+            return row is not None and row[0] == "true"
+        except:
+            return False
         
     def mark_setup_completed(self):
         connection = self.connect()
@@ -122,6 +125,20 @@ class MySqlStorage:
             VALUES ('setup_completed', 'true')
             ON DUPLICATE KEY UPDATE value = 'true'
         """)
+        connection.commit()
+        connection.close()
+
+    def ensure_metadata_table(self):
+        connection = self.connect()
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS app_metadata (
+                key_name VARCHAR(50) PRIMARY KEY,
+                value TEXT NOT NULL
+            )
+        """)
+
         connection.commit()
         connection.close()
 

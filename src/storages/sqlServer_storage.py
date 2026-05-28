@@ -114,6 +114,23 @@ class SqlServerStorage:
                 """)
             connection.commit()
 
+    def ensure_metadata_table(self):
+        with self.connect() as connection:
+            with connection.cursor() as cursor:
+
+                cursor.execute("""
+                    IF NOT EXISTS (
+                        SELECT * FROM sysobjects
+                        WHERE name='app_metadata' AND xtype='U'
+                    )
+                    CREATE TABLE app_metadata (
+                        key_name NVARCHAR(50) PRIMARY KEY,
+                        value NVARCHAR(MAX) NOT NULL
+                    )
+                """)
+
+            connection.commit()
+
 
 # start = SqlServerStorage()
 # start.creat_tables()

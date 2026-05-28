@@ -4,15 +4,15 @@ from src.storages.mysql_storage import MySqlStorage
 from src.storages.postgreSql_storage import PostgreSqlStorage
 from src.storages.sqlServer_storage import SqlServerStorage
 from src.storages.sqlite_storage import SqliteStorage
-from src.controler.book_menu import book_managment
-from src.controler.member_menu import member_managment
+from src.controler.book_controler import book_managment
+from src.controler.member_controler import member_managment
 from src.repositories.sqlite_repository import *
 from src.bootstrap import Bootstrap
 
 
-# bootstrap = Bootstrap(MySqlStorage(), PostgreSqlStorage(), SqliteStorage(), SqlServerStorage())
-# bootstrap.run()
-# print("\nApplication started...")
+bootstrap = Bootstrap(MySqlStorage(), PostgreSqlStorage(), SqliteStorage(), SqlServerStorage())
+bootstrap.run()
+print("\nApplication started...")
 
 # Main entry point of the program
 # - Shows the starter menu to the user

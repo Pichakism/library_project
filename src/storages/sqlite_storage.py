@@ -44,6 +44,8 @@ class SqliteStorage:
                 page_count INTEGER,
                 genre TEXT,
                 status TEXT NOT NULL,
+                physical_version TEXT NOT NULL,
+                digital_version VTEXT NOT NULL,
                 count INTEGER)"""
         )
         cursor.execute(
@@ -95,6 +97,20 @@ class SqliteStorage:
             INSERT OR REPLACE INTO app_metadata (key_name, value)
             VALUES ('setup_completed', 'true')
         """)
+        connection.commit()
+        connection.close()
+
+    def ensure_metadata_table(self):
+        connection = self.connect()
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS app_metadata (
+                key_name TEXT PRIMARY KEY,
+                value TEXT NOT NULL
+            )
+        """)
+
         connection.commit()
         connection.close()
 

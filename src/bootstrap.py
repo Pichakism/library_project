@@ -45,6 +45,7 @@ class Bootstrap:
 
 
     def first_mySql_setup(self):
+        self.mysql.ensure_metadata_table()
         try:
             if self.mysql.is_setup_completed():
                 print("[OK] MySQL Setup already completed.")
@@ -57,6 +58,7 @@ class Bootstrap:
             print("\nERROR: ", e)
 
     def first_pSql_setup(self):
+        self.psql.ensure_metadata_table()
         try:
             if self.psql.is_setup_completed():
                 print("[OK] PostgreSQL Setup already completed.")
@@ -69,6 +71,7 @@ class Bootstrap:
             print("\nERROR: ", e)
 
     def first_sqLite_setup(self):
+        self.sqlite.ensure_metadata_table()
         try:
             if self.sqlite.is_setup_completed():
                 print("[OK] SqLite Setup already completed.")
@@ -81,6 +84,7 @@ class Bootstrap:
             print("\nERROR: ", e)
 
     def first_sqlServer_setup(self):
+        self.sqlServer.ensure_metadata_table()
         try:
             if self.sqlServer.is_setup_completed():
                 print("[OK] SQl Server Setup already completed.")
@@ -98,18 +102,22 @@ class Bootstrap:
 
         if self.mysql_storage is None:
             print("mySQL storage NOT available")
-        self.first_mySql_setup()
+        else:
+            self.first_mySql_setup()
 
         if self.psql_storage is None:
             print("postgreSQL storage NOT available")
-        self.first_pSql_setup()
+        else:
+            self.first_pSql_setup()
 
         if self.sqlite_storage is None:
             print("SqLite storage NOT available")
-        self.first_sqLite_setup()
+        else:
+            self.first_sqLite_setup()
 
         if self.sqlServer_storage is None:
             print("SQl Server storage NOT available")
-        self.first_sqlServer_setup()
+        else:
+            self.first_sqlServer_setup()
 
         return

@@ -69,7 +69,7 @@ class PostgreSqlStorage:
                 last_name TEXT NOT NULL,
                 phone_number TEXT UNIQUE,
                 status TEXT,
-                date DATE
+                join_date DATE
         )
         """
         )
@@ -121,5 +121,19 @@ class PostgreSqlStorage:
             VALUES ('setup_completed', 'true')
             ON CONFLICT (key_name) DO UPDATE SET value = 'true'
         """)
+        connection.commit()
+        connection.close()
+
+    def ensure_metadata_table(self):
+        connection = self.connect()
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS app_metadata (
+                key_name TEXT PRIMARY KEY,
+                value TEXT NOT NULL
+            )
+        """)
+
         connection.commit()
         connection.close()
