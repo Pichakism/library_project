@@ -162,7 +162,6 @@ class MemberRepository:
             print("SQL ERROR:", e)
             raise
 
-    # TODO :                                                                                    
     def update_member(self, column, value, updates):
         set_clause = ", ".join(f"{field} = %s" for field in updates)
 

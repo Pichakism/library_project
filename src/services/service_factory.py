@@ -1,5 +1,6 @@
 from src.services.book_service import BookService
 from src.services.member_service import MemberService
+from src.services.loan_service import LoanService
 from src.repositories import (
     sqlite_repository,
     mysql_repository,
@@ -11,6 +12,7 @@ from src.storages.sqlite_storage import SqliteStorage
 from src.storages.mysql_storage import MySqlStorage
 from src.storages.postgreSql_storage import PostgreSqlStorage
 from src.storages.sqlServer_storage import SqlServerStorage
+from src.storages.csv_storage import CsvStorage
 
 # -------------------------
 # BOOK SERVICE FACTORY
@@ -20,7 +22,7 @@ from src.storages.sqlServer_storage import SqlServerStorage
 # - Other databases return BookService with injected repo + storage
 def get_book_service(db_type: str):
     if db_type == "1":
-        return "csv", csv_repository.BookRepository()
+        return BookService(csv_repository.BookRepository(), CsvStorage())
 
     if db_type == "2":
         return BookService(sqlite_repository.BookRepository(), SqliteStorage())
@@ -44,7 +46,7 @@ def get_book_service(db_type: str):
 # - Other databases return MemberService with injected repo + storage
 def get_member_service(db_type: str):
     if db_type == "1":
-        return "csv", csv_repository.MemberRepository()
+        return MemberService(csv_repository.BookRepository(), CsvStorage())
 
     if db_type == "2":
         return MemberService(sqlite_repository.MemberRepository(), SqliteStorage())
@@ -57,5 +59,24 @@ def get_member_service(db_type: str):
 
     if db_type == "5":
         return MemberService(sqlServer_repository.MemberRepository(), SqlServerStorage())
+
+    return None
+
+def get_loan_service(db_type: str):
+
+    if db_type == "1":
+        return LoanService(csv_repository.BookRepository(), CsvStorage())
+
+    if db_type == "2":
+        return LoanService(sqlite_repository.LoanRepository(), SqliteStorage())
+
+    if db_type == "3":
+        return LoanService(mysql_repository.LoanRepository(), MySqlStorage())
+
+    if db_type == "4":
+        return LoanService(postgreSql_repository.LoanRepository(), PostgreSqlStorage())
+
+    if db_type == "5":
+        return LoanService(sqlServer_repository.LoanRepository(), SqlServerStorage())
 
     return None

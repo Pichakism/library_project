@@ -203,7 +203,7 @@ class LoanRepository:
             INSERT INTO loans(
             member_id,
             book_id,
-            loan_date) VALUES (%s, %s, %s)
+            loan_date) VALUES (?, ?, ?)
         """
         try:
             self.storage.execute_row(

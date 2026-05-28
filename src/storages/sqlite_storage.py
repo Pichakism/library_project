@@ -43,7 +43,7 @@ class SqliteStorage:
                 publication_year INTEGER,
                 page_count INTEGER,
                 genre TEXT,
-                status TEXT NOT NULL,
+                book_status TEXT NOT NULL,
                 physical_version TEXT NOT NULL,
                 digital_version VTEXT NOT NULL,
                 count INTEGER)"""

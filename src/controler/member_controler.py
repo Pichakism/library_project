@@ -12,7 +12,7 @@ member_fields = {
     "3": "last_name",
     "4": "phone_number",
     "5": "member_status",
-    "6": "date"
+    "6": "join_date"
 }
 
 # -------------------------
@@ -31,9 +31,7 @@ def add_member(chosen_db):
     join_date = str(gregorian_to_jalali(datetime.date.today().year, datetime.date.today().month, datetime.date.today().day))
 
     member = Member(first_name, last_name, phone_number,Member_Status(member_status), join_date)
-    if chosen_db == "1":
-        add = csv_repository.BookRepository() #----------------------
-        print(add.save_book_in_csv(book)) #----------------------
+    
     service = get_member_service(chosen_db)
     print(service.insert_member(member))
 
@@ -42,7 +40,7 @@ def add_member(chosen_db):
 # -------------------------
 # Gets search input from user
 # selects column and value
-def user_input_for_search():
+def user_input_for_member_search():
     while True:
         column = int(input(
             "\n-----Search Member Menu-----\n"
@@ -70,17 +68,10 @@ def user_input_for_search():
 # Searches member data using service layer
 # prints formatted output
 def search_member(chosen_db):
-    result = user_input_for_search()
+    result = user_input_for_member_search()
     if result is None:
         return
     column, value = result
-    if chosen_db == "1":
-        from src.repositories.csv_repository import BookRepository # ---------------------------------
-        data = BookRepository().search_book_in_csv(book_fields[str(column)], value) # ---------------------------------
-        for i, row in enumerate(data, 1): # ---------------------------------
-            print(f"\nBook {i}: {row}") # ---------------------------------
-
-        return None
 
     service = get_member_service(chosen_db)
     data = service.select_member(member_fields[str(column)], value)
@@ -89,6 +80,8 @@ def search_member(chosen_db):
         print(f"\nMember Number {i}:")
         for k, v in row.items():
             print(f"{k} : {v}")
+
+    return data, member_fields[str(column)], value
     
 
 # -------------------------
@@ -144,11 +137,6 @@ def remove_member(chosen_db):
         if column == 0:
             return
         value = input("\nWhat is the desired value to search for? : ")
-
-        if chosen_db == "1":
-            from src.repositories.csv_repository import BookRepository # ---------------------------------
-            print(BookRepository().remove_book_in_csv(column, value)) # ---------------------------------
-            continue # ---------------------------------
 
         service = get_member_service(chosen_db)
         print(service.delete_member(member_fields[str(column)], value))

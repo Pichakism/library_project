@@ -1,14 +1,14 @@
 class Loan:
-    def __init__(self, book_isbn, member_id, date):
+    def __init__(self, book_id, member_id, loan_date):
         # self.id = id
-        self.book_isbn = book_isbn
+        self.book_id = book_id
         self.member_id = member_id
-        self.date = date
+        self.loan_date = loan_date
 
     def __str__(self):
         return(
             # f"ID = {self.id}\n"
-            f"Book ISBN = {self.isbn}\n"
-            f"Member ID = {self.book_title}\n"
-            f"Date of loan = {self.auther_name}\n"
+            f"Book ISBN = {self.book_id}\n"
+            f"Member ID = {self.member_id}\n"
+            f"Date of loan = {self.loan_date}\n"
         )
