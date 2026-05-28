@@ -9,16 +9,14 @@ from src.controler.member_controler import member_managment
 from src.repositories.sqlite_repository import *
 from src.bootstrap import Bootstrap
 
-
-bootstrap = Bootstrap(MySqlStorage(), PostgreSqlStorage(), SqliteStorage(), SqlServerStorage())
-bootstrap.run()
-print("\nApplication started...")
-
 # Main entry point of the program
-# - Shows the starter menu to the user
-# - Routes user to Book or Member management modules
-# - Keeps program running until user chooses Exit
+# - Initializes databases
+# - Shows starter menu
+# - Routes user to selected management module
 def starter():
+    bootstrap = Bootstrap(MySqlStorage(), PostgreSqlStorage(), SqliteStorage(), SqlServerStorage())
+    bootstrap.run()
+    print("\nApplication started...")
     while True:
         print(
             "\n---Starter Menu---"

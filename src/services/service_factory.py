@@ -7,13 +7,17 @@ from src.repositories import (
     sqlServer_repository,
     csv_repository
 )
-
 from src.storages.sqlite_storage import SqliteStorage
 from src.storages.mysql_storage import MySqlStorage
 from src.storages.postgreSql_storage import PostgreSqlStorage
 from src.storages.sqlServer_storage import SqlServerStorage
 
-
+# -------------------------
+# BOOK SERVICE FACTORY
+# -------------------------
+# Returns proper service based on selected database
+# - CSV returns repository directly
+# - Other databases return BookService with injected repo + storage
 def get_book_service(db_type: str):
     if db_type == "1":
         return "csv", csv_repository.BookRepository()
@@ -32,6 +36,12 @@ def get_book_service(db_type: str):
 
     return None
 
+# -------------------------
+# MEMBER SERVICE FACTORY
+# -------------------------
+# Returns proper service based on selected database
+# - CSV returns repository directly
+# - Other databases return MemberService with injected repo + storage
 def get_member_service(db_type: str):
     if db_type == "1":
         return "csv", csv_repository.MemberRepository()

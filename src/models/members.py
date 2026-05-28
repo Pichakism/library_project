@@ -1,6 +1,6 @@
 # Represents a Member entity in the system
 # - Stores personal and membership-related information
-# - Used for creating member objects before saving to CSV
+# - Used for creating member objects before saving
 class Member:
     def __init__(self, first_name, last_name, phone_number, member_status, join_date):
         # self.id = id

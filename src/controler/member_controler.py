@@ -3,14 +3,9 @@ import datetime
 from src.services.gtj import gregorian_to_jalali
 from src.models.members import Member
 from src.models.status import Member_Status
-# from src.repositories import sqlite_repository
-# from src.repositories import csv_repository
-# from src.repositories import mysql_repository
-# from src.repositories import postgreSql_repository
-# from src.repositories import sqlServer_repository
 from src.services.service_factory import get_member_service
 
-
+# Mapping menu input numbers to actual database column names
 member_fields = {
     "1": "id",
     "2": "first_name",
@@ -20,11 +15,12 @@ member_fields = {
     "6": "date"
 }
 
-# Adds a new member to CSV
-# - Gets member info from user input
-# - Converts current Gregorian date to Jalali
-# - Creates Member object
-# - Calls save_member() to store data in CSV
+# -------------------------
+# ADD MEMBER
+# -------------------------
+# Gets member info from user input
+# creates Member object
+# sends it to service layer for insert operation
 def add_member(chosen_db):
     print("\n-----Add Member Menu-----")
     # id = input("\nEnter member ID: ")
@@ -41,7 +37,11 @@ def add_member(chosen_db):
     service = get_member_service(chosen_db)
     print(service.insert_member(member))
 
-
+# -------------------------
+# SEARCH INPUT
+# -------------------------
+# Gets search input from user
+# selects column and value
 def user_input_for_search():
     while True:
         column = int(input(
@@ -64,10 +64,11 @@ def user_input_for_search():
         else:
             return column, value
 
-# Searches members in CSV based on selected field
-# - Shows search menu
-# - Maps user choice to column name
-# - Calls search_member() with selected field and value
+# -------------------------
+# SEARCH MEMBER
+# -------------------------
+# Searches member data using service layer
+# prints formatted output
 def search_member(chosen_db):
     result = user_input_for_search()
     if result is None:
@@ -90,10 +91,12 @@ def search_member(chosen_db):
             print(f"{k} : {v}")
     
 
-# Edits an existing member in CSV
-# - Selects column to search
-# - Gets value to locate member
-# - Calls edit_member() to update record
+# -------------------------
+# EDIT MEMBER
+# -------------------------
+# Selects record from search result
+# gets updated values from user
+# sends update request to service layer
 def edit_member(chosen_db):
     result = search_member(chosen_db)
     if not result:
@@ -122,10 +125,11 @@ def edit_member(chosen_db):
 
     print(service.update_member(column, value, updates))
 
-# Removes a member from CSV
-# - Selects column to search
-# - Gets value to identify member
-# - Calls remove_member() to delete record
+# -------------------------
+# REMOVE MEMBER
+# -------------------------
+# Deletes member based on selected column
+# calls service layer delete method
 def remove_member(chosen_db):
     while True:
         column = int(input(
@@ -149,8 +153,10 @@ def remove_member(chosen_db):
         service = get_member_service(chosen_db)
         print(service.delete_member(member_fields[str(column)], value))
 
-# Main menu for member management
-# - Routes user to add, search, edit, or remove member operations
+# -------------------------
+# MAIN MENU
+# -------------------------
+# only handles user input and routing
 def member_managment():
     while True:
         user_input = (input(

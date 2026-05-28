@@ -2,17 +2,12 @@ import csv
 from src.models.books import Book
 from src.models.loan import Loan
 from src.models.status import *
-# from src.services.csv_services import orchestration
-# from src.repositories import (sqlite_repository, mysql_repository, postgreSql_repository, sqlServer_repository, csv_repository)
-# from src.services.book_service import BookService 
+
+# Service factory is responsible for returning the correct service
+# based on selected database (SQLite, MySQL, PostgreSQL, SQL Server)
 from src.services.service_factory import get_book_service
-# from src.storages.sqlite_storage import SqliteStorage
-# from src.storages.mysql_storage import MySqlStorage
-# from src.storages.postgreSql_storage import PostgreSqlStorage
-# from src.storages.sqlServer_storage import SqlServerStorage
-# from src.services import sqlite_service, mysql_service, postgreSql_service, sqlServer_service
 
-
+# Mapping menu input numbers to actual database column names
 book_fields = {
     "1": "isbn",
     "2": "book_title",
@@ -26,10 +21,12 @@ book_fields = {
     "10": "count"
 }
 
-# Adds a new book to CSV
-# - Takes user input for all book fields
-# - Creates a Book object
-# - Calls save_book() to persist it in CSV
+# -------------------------
+# ADD BOOK
+# -------------------------
+# Gets book info from user input,
+# creates Book object,
+# sends it to service layer for insertion
 def add_book(chosen_db):
     print("\n-----Add Book Menu-----")
     isbn = input("\nEnter book ISBN: ")
@@ -43,6 +40,7 @@ def add_book(chosen_db):
     digital_version = int(input("\n1 - Yes\n2 - No\nEnter Digital version Value: "))
     count = int(input("Enter count of book: "))
 
+    # Domain object creation
     book = Book(isbn,
             book_title,
             author_name,
@@ -56,9 +54,15 @@ def add_book(chosen_db):
     if chosen_db == "1":
         add = csv_repository.BookRepository()
         print(add.save_book_in_csv(book))
+
+    # Controller only communicates with service layer
     service = get_book_service(chosen_db)
     print(service.insert_book(book))
     
+# -------------------------
+# SEARCH INPUT
+# -------------------------
+# Handles search menu input and validation
 def user_input_for_search():
     while True:
         column = int(input(
@@ -85,10 +89,11 @@ def user_input_for_search():
         else:
             return column, value
 
-# Searches books in CSV based on selected field
-# - Shows search menu
-# - Takes search column + value
-# - Calls search_book() from services
+# -------------------------
+# SEARCH BOOK
+# -------------------------
+# Delegates search operation to service layer
+# and prints formatted output
 def search_book(chosen_db):
     result = user_input_for_search()
     if result is None:
@@ -113,10 +118,12 @@ def search_book(chosen_db):
 
     return data, book_fields[str(column)], value
     
-# Edits an existing book record in CSV
-# - Selects column to search
-# - Gets search value
-# - Calls edit_book() to update matched record
+# -------------------------
+# EDIT BOOK
+# -------------------------
+# Selects record from search result,
+# collects update fields,
+# sends update request to service layer
 def edit_book(chosen_db):
     result = search_book(chosen_db)
     if not result:
@@ -145,10 +152,10 @@ def edit_book(chosen_db):
 
     print(service.update_book(column, value, updates))
 
-# Removes a book from CSV
-# - Selects column to search
-# - Gets search value
-# - Calls remove_book() to delete matched record
+# -------------------------
+# REMOVE BOOK
+# -------------------------
+# Deletes book based on selected search criteria
 def remove_book(chosen_db):
     while True:
         column = int(input(
@@ -187,6 +194,10 @@ def remove_book(chosen_db):
     loan = Loan(id, book_isbn, member_id, date)
     save_loan_in_csv(loan)"""
 
+# -------------------------
+# LOAN BOOK
+# -------------------------
+# Handles book borrowing process between book + member search
 def loan_book(chosen_db):
     """print("\n-----Loan Book Menu-----")
 
@@ -248,8 +259,10 @@ def loan_book(chosen_db):
             elif chosen_db == "3":
                 ... # TODO:         
 
-# Main book management menu
-# - Routes user to add, search, edit, or remove book functions
+# -------------------------
+# MAIN MENU
+# -------------------------
+# Only responsible for user interaction and routing
 def book_managment():
     while True:
         user_input = (input(

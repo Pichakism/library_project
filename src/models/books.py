@@ -1,6 +1,6 @@
 # Represents a Book entity in the system
 # - Stores all metadata related to a book
-# - Used for creating book objects before saving to CSV
+# - Used for creating book objects before saving
 class Book:
     def __init__(self, isbn, book_title, author_name, publication_year, page_count, genre, book_status, physical_version, digital_version, count):
         self.isbn = isbn
