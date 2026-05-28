@@ -10,9 +10,9 @@ from src.repositories.sqlite_repository import *
 from src.bootstrap import Bootstrap
 
 
-bootstrap = Bootstrap(MySqlStorage(), PostgreSqlStorage(), SqliteStorage(), SqlServerStorage())
-bootstrap.run()
-print("\nApplication started...")
+# bootstrap = Bootstrap(MySqlStorage(), PostgreSqlStorage(), SqliteStorage(), SqlServerStorage())
+# bootstrap.run()
+# print("\nApplication started...")
 
 # Main entry point of the program
 # - Shows the starter menu to the user

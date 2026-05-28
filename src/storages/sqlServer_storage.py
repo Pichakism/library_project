@@ -12,7 +12,7 @@ class SqlServerStorage:
         self.driver = SqlServerConfig.DB_DRIVER
 
     def connect(self):
-        connection_str = (
+        return pyodbc.connect(
             f"DRIVER={{{self.driver}}};"
             f"SERVER={self.server},{self.port};"
             f"DATABASE={self.database};"
@@ -20,7 +20,6 @@ class SqlServerStorage:
             f"PWD={self.password};"
             "TrustServerCertificate=yes;"
         )
-        return pyodbc.connect(connection_str)
 
     def execute(self, query, params=()):
         with self.connect() as connection:

@@ -34,7 +34,8 @@ class BookRepository:
             results = self.storage.fetch_all(query, params)
             return results
         except Exception as e:
-            raise ConnectionError("ERROR: DB Connection Failed...!")
+            print("SQL ERROR:", e)
+            raise
 
     def save_book(self, book):
         query = """
@@ -70,7 +71,8 @@ class BookRepository:
             )
             return "\nBook added successfully...\n"
         except Exception as e:
-            raise ConnectionError("ERROR: DB Connection Failed...!")
+            print("SQL ERROR:", e)
+            raise
 
     def delete_book(self, column, value):
         allowed_column = ["id", "isbn", "book_title", "author_name",
@@ -100,7 +102,8 @@ class BookRepository:
             self.storage.execute(query, params)
             return "\nBook deleted successfully...\n"
         except Exception as e:
-            raise ConnectionError("ERROR: DB Connection Failed...!")
+            print("SQL ERROR:", e)
+            raise
 
     def update_book(self, column, value, updates):
         set_clause = ", ".join(f"{field} = ?" for field in updates)
@@ -114,8 +117,10 @@ class BookRepository:
         params = tuple(updates.values()) + (value,)
         try:
             self.storage.execute(query, params)
+            return "\nBook deleted successfully...\n"
         except Exception as e:
-            raise ConnectionError("ERROR: DB Connection Failed...!")
+            print("SQL ERROR:", e)
+            raise
         
 class MemberRepository:
     def __init__(self):
@@ -147,7 +152,8 @@ class MemberRepository:
             result = self.storage.fetch_all(query, params)
             return result
         except Exception as e:
-            raise ConnectionError("ERROR: DB Connection Failed...!")
+            print("SQL ERROR:", e)
+            raise
 
     def save_member(self, member):
         query = """
@@ -173,7 +179,8 @@ class MemberRepository:
             )
             return "\nMember added successfully...\n"
         except Exception as e:
-            raise ConnectionError("ERROR: DB Connection Failed...!")
+            print("SQL ERROR:", e)
+            raise
 
     def delete_member(self, column, value):
         allowed_column = ["id", "first_name", "last_name",
@@ -191,7 +198,8 @@ class MemberRepository:
             self.storage.execute(query, (value,))
             return "\nMember deleted successfully...\n"
         except Exception as e:
-            raise ConnectionError("ERROR: DB Connection Failed...!")
+            print("SQL ERROR:", e)
+            raise
 
     def update_member(self, column, value, updates):
         set_clause = ", ".join(f"{field} = ?" for field in updates)
@@ -205,8 +213,10 @@ class MemberRepository:
         params = tuple(updates.values()) + (value,)
         try:
             self.storage.execute(query, params)
+            return "\nMember updated successfully...\n"
         except Exception as e:
-            raise ConnectionError("ERROR: DB Connection Failed...!")
+            print("SQL ERROR:", e)
+            raise
 
 class LoanRepository:
     def __init__(self):
@@ -228,7 +238,8 @@ class LoanRepository:
             results = self.storage.fetch_all(query, (f"%{value}%",))
             return results
         except Exception as e:
-            raise ConnectionError("ERROR: DB Connection Failed...!")
+            print("SQL ERROR:", e)
+            raise
 
     def save_loan(self, loan):
         query = """
@@ -250,7 +261,8 @@ class LoanRepository:
             )
             return "\nLoan added successfully...\n"
         except Exception as e:
-            raise ConnectionError("ERROR: DB Connection Failed...!")
+            print("SQL ERROR:", e)
+            raise
 
     def delete_loan(self, column, value):
         allowed_column = ["id", "book_id", "member_id", "loan_date"]
@@ -267,4 +279,5 @@ class LoanRepository:
             self.storage.execute(query, (value,))
             return "\nLoan deleted successfully...\n"
         except Exception as e:
-            raise ConnectionError("ERROR: DB Connection Failed...!")
+            print("SQL ERROR:", e)
+            raise

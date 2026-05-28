@@ -9,7 +9,7 @@ from src.repositories import csv_repository
 from src.repositories import mysql_repository
 from src.repositories import postgreSql_repository
 from src.repositories import sqlServer_repository
-from src.services import sqlite_service
+from src.services import sqlite_service, mysql_service, postgreSql_service, sqlServer_service
 
 
 book_fields = {
@@ -54,19 +54,19 @@ def add_book(chosen_db):
             count)
     if chosen_db == "1":
         add = csv_repository.BookRepository()
-        add.save_book_in_csv(book)
+        print(add.save_book_in_csv(book))
     elif chosen_db == "2":
         add = sqlite_repository.BookRepository()
-        add.save_book(book)
+        print(add.save_book(book))
     elif chosen_db == "3":
         add = mysql_repository.BookRepository()
-        add.save_book(book)
+        print(add.save_book(book))
     elif chosen_db == "4":
         add = postgreSql_repository.BookRepository()
-        add.save_book(book)
+        print(add.save_book(book))
     elif chosen_db == "5":
         add = sqlServer_repository.BookRepository()
-        add.save_book(book)
+        print(add.save_book(book))
     
 def user_input_for_search_or_update():
     while True:
@@ -88,7 +88,7 @@ def user_input_for_search_or_update():
         if search_column == 0:
             return
         search_value = input("\nWhat is the desired value to search for? : ")
-        if search_column not in range(1, 10):
+        if search_column not in range(1, 11):
             print("ERROR: Column is not valid!")
             continue
         else:
@@ -99,22 +99,25 @@ def user_input_for_search_or_update():
 # - Takes search column + value
 # - Calls search_book() from services
 def search_book(chosen_db):
-        column, values = user_input_for_search_or_update()
-        if chosen_db == "1":
-            search = csv_repository.BookRepository()
-            search.search_book_in_csv(book_fields[str(column)], values)
-        elif chosen_db == "2":
-            search = sqlite_service.SqLiteService()
-            return search.search_book(book_fields[str(column)], values), book_fields[str(column)], values
-        elif chosen_db == "3":
-            search = mysql_repository.BookRepository()
-            search.search_book(book_fields[str(column)], values)
-        elif chosen_db == "4":
-            search = postgreSql_repository.BookRepository()
-            search.search_book(book_fields[str(column)], values)
-        elif chosen_db == "5":
-            search = sqlServer_repository.BookRepository()
-            search.search_book(book_fields[str(column)], values)
+    result = user_input_for_search_or_update()
+    if result is None:
+        return
+    column, values = result
+    if chosen_db == "1":
+        search = csv_repository.BookRepository()
+        search.search_book_in_csv(book_fields[str(column)], values)
+    elif chosen_db == "2":
+        search = sqlite_service.SqLiteService()
+        return search.search_book(book_fields[str(column)], values), book_fields[str(column)], values
+    elif chosen_db == "3":
+        search = mysql_service.MySqlService()
+        return search.search_book(book_fields[str(column)], values), book_fields[str(column)], values
+    elif chosen_db == "4":
+        search = postgreSql_service.PostgreSqlService()
+        return search.search_book(book_fields[str(column)], values), book_fields[str(column)], values
+    elif chosen_db == "5":
+        search = sqlServer_service.SqlServerService()
+        return search.search_book(book_fields[str(column)], values), book_fields[str(column)], values
     
 # Edits an existing book record in CSV
 # - Selects column to search
@@ -131,35 +134,32 @@ def edit_book(chosen_db):
             return
         sqlite_service.SqLiteService().update_book(data, column, value)
     elif chosen_db == "3":
-        edit = mysql_repository.BookRepository()
-        edit.search_book(book_fields[str(column)], values)
+        data, column, value = search_book(chosen_db)
+        if not data:
+            print("No books found!")
+            return
+        mysql_service.MySqlService().update_book(data, column, value)
     elif chosen_db == "4":
-        edit = postgreSql_repository.BookRepository()
-        edit.search_book(book_fields[str(column)], values)
+        data, column, value = search_book(chosen_db)
+        if not data:
+            print("No books found!")
+            return
+        postgreSql_service.PostgreSqlService().update_book(data, column, value)
     elif chosen_db == "5":
-        edit = sqlServer_repository.BookRepository()
-        edit.search_book(book_fields[str(column)], values)
+        data, column, value = search_book(chosen_db)
+        if not data:
+            print("No books found!")
+            return
+        sqlServer_service.SqlServerService.update_book(data, column, value)
 
 # Removes a book from CSV
 # - Selects column to search
 # - Gets search value
 # - Calls remove_book() to delete matched record
 def remove_book(chosen_db):
-    search_fields = {
-            "1": "isbn",
-            "2": "book_title",
-            "3": "author_name",
-            "4": "publication_year",
-            "5": "page_count",
-            "6": "genre",
-            "7": "book_status",
-            "8": "physical_version",
-            "9": "digital_version",
-            "10": "count",
-        }
     while True:
         search_column = int(input(
-            "\n-----Edit Book Menu-----\n"
+            "\n-----Delete Book Menu-----\n"
             "\n1 - ISBN"
             "\n2 - Book Title"
             "\n3 - Auter Name"
@@ -185,16 +185,16 @@ def remove_book(chosen_db):
                 delete.remove_book_in_csv(search_column, search_value)
             elif chosen_db == "2":
                 delete = sqlite_repository.BookRepository()
-                delete.delete_book(search_fields[str(search_column)], search_value)
+                delete.delete_book(book_fields[str(search_column)], search_value)
             elif chosen_db == "3":
                 delete = mysql_repository.BookRepository()
-                delete.delete_book(search_fields[str(search_column)], search_value)
+                delete.delete_book(book_fields[str(search_column)], search_value)
             elif chosen_db == "4":
                 delete = postgreSql_repository.BookRepository()
-                delete.delete_book(search_fields[str(search_column)], search_value)
+                delete.delete_book(book_fields[str(search_column)], search_value)
             elif chosen_db == "5":
                 delete = sqlServer_repository.BookRepository()
-                delete.delete_book(search_fields[str(search_column)], search_value)
+                delete.delete_book(book_fields[str(search_column)], search_value)
 
 """def add_loan(chosen_db):
     print("\n-----Add Member Menu-----")

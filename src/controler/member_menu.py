@@ -8,6 +8,16 @@ from src.repositories import csv_repository
 from src.repositories import mysql_repository
 from src.repositories import postgreSql_repository
 from src.repositories import sqlServer_repository
+from src.services import sqlite_service, mysql_service, postgreSql_service, sqlServer_service
+
+member_fields = {
+    "1": "id",
+    "2": "first_name",
+    "3": "last_name",
+    "4": "phone_number",
+    "5": "member_status",
+    "6": "date"
+}
 
 # Adds a new member to CSV
 # - Gets member info from user input
@@ -40,21 +50,10 @@ def add_member(chosen_db):
         add = sqlServer_repository.MemberRepository()
         add.save_member(member)
 
-# Searches members in CSV based on selected field
-# - Shows search menu
-# - Maps user choice to column name
-# - Calls search_member() with selected field and value
-def search_member(chosen_db):
+
+def user_input_for_search_or_update():
     while True:
-        search_fields = {
-            "1": "id",
-            "2": "first_name",
-            "3": "last_name",
-            "4": "phone_number",
-            "5": "member_status",
-            "6": "date"
-        }
-        user_input = input(
+        search_column = int(input(
             "\n-----Search Member Menu-----\n"
             "How do you want to search?\n"
             "1 - By ID\n"
@@ -64,58 +63,74 @@ def search_member(chosen_db):
             "5 - By Member status\n"
             "6 - By Date of join\n"
             "0 - Back...\n\n"
-            "Enter: ")
-        if user_input in search_fields:
-            value = input("\nEnter search value: ")
-            if user_input == "1":
-                value = int(value)
-            if chosen_db == "1":
-                search = csv_repository.MemberRepository()
-                search.search_member_in_csv(search_fields[user_input], value)
-            elif chosen_db == "2":
-                search = sqlite_repository.MemberRepository()
-                search.search_member(search_fields[user_input], value)
-            elif chosen_db == "3":
-                search = mysql_repository.MemberRepository()
-                search.search_member(search_fields[user_input], value)
-            elif chosen_db == "4":
-                search = postgreSql_repository.MemberRepository()
-                search.search_member(search_fields[user_input], value)
-            elif chosen_db == "5":
-                search = sqlServer_repository.MemberRepository()
-                search.search_member(search_fields[user_input], value)
-        elif user_input == "0":
+            "Enter: "))
+        if search_column == 0:
             return
+        search_value = input("\nWhat is the desired value to search for? : ")
+        if search_column not in range(1, 7):
+            print("ERROR: Column is not valid!")
+            continue
         else:
-            print("Invalid choice!")
+            return search_column, search_value
+
+# Searches members in CSV based on selected field
+# - Shows search menu
+# - Maps user choice to column name
+# - Calls search_member() with selected field and value
+def search_member(chosen_db):
+    result = user_input_for_search_or_update()
+    if result is None:
+        return
+    column, values = result
+    if chosen_db == "1":
+        search = csv_repository.MemberRepository()
+        search.search_member_in_csv(member_fields[str(column)], values)
+    elif chosen_db == "2":
+        search = sqlite_service.SqLiteService()
+        return search.search_member(member_fields[str(column)], values), member_fields[str(column)], values
+    elif chosen_db == "3":
+        search = mysql_service.MySqlService()
+        return search.search_member(member_fields[str(column)], values), member_fields[str(column)], values
+    elif chosen_db == "4":
+        search = postgreSql_service.PostgreSqlService()
+        return search.search_member(member_fields[str(column)], values), member_fields[str(column)], values
+    elif chosen_db == "5":
+        search = sqlServer_service.SqlServerService()
+        return search.search_member(member_fields[str(column)], values), member_fields[str(column)], values
+    
 
 # Edits an existing member in CSV
 # - Selects column to search
 # - Gets value to locate member
 # - Calls edit_member() to update record
 def edit_member(chosen_db):
-    while True:
-        search_column = int(input(
-            "\n1 - ID"
-            "\n2 - First Name"
-            "\n3 - Last Name"
-            "\n4 - Phone Number"
-            "\n5 - Member Status"
-            "\n6 - Date of Join"
-            "\n0 - Back"
-            "\n\nWhich column should we search based on? : "))
-        if search_column == 0:
+    if chosen_db == "1":
+        edit = csv_repository.BookRepository()
+        edit.search_book_in_csv(member_fields[str(column)], values)
+    elif chosen_db == "2":
+        data, column, value = search_member(chosen_db)
+        if not data:
+            print("No books found!")
             return
-
-        search_value = input("\nWhat is the desired value to search for? : ")
-
-        if search_column not in range(1, 6):
-            print("ERROR: Column is not valid!")
-            continue
-        else:
-            if chosen_db == "1":
-                edit = csv_repository.MemberRepository()
-                edit.edit_member_in_csv(search_column, search_value)
+        sqlite_service.SqLiteService().update_member(data, column, value)
+    elif chosen_db == "3":
+        data, column, value = search_member(chosen_db)
+        if not data:
+            print("No books found!")
+            return
+        mysql_service.MySqlService().update_member(data, column, value)
+    elif chosen_db == "4":
+        data, column, value = search_member(chosen_db)
+        if not data:
+            print("No books found!")
+            return
+        postgreSql_service.PostgreSqlService().update_member(data, column, value)
+    elif chosen_db == "5":
+        data, column, value = search_member(chosen_db)
+        if not data:
+            print("No books found!")
+            return
+        sqlServer_service.SqlServerService.update_member(data, column, value)
 
 # Removes a member from CSV
 # - Selects column to search
@@ -151,7 +166,6 @@ def remove_member(chosen_db):
         else:
             if search_column == 1:
                 search_value = int(search_value)
-            print(search_value, type(search_value))
             if chosen_db == "1":
                 delete = csv_repository.MemberRepository()
                 delete.remove_member_in_csv(search_column, search_value)

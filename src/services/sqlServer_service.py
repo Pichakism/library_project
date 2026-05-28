@@ -1,21 +1,21 @@
-from src.repositories import sqlite_repository
-from src.storages.sqlite_storage import SqliteStorage
+from src.repositories import sqlServer_repository
+from src.storages.sqlServer_storage import SqlServerStorage
 
 
-class SqLiteService:
+class SqlServerService:
     def __init__(self):
-        self.storage = SqliteStorage()
+        self.storage = SqlServerStorage()
 
     def search_book(self, column, value):
         data_list = []
         i = 1
-        sqLite_columns = [
+        sqlServer_columns = [
             "id", "isbn", "title", "author name",
             "publication year", "page count", "genre", "book status", "count"]
-        search_results = sqlite_repository.BookRepository().search_book(column, value)
+        search_results = sqlServer_repository.BookRepository.search_book(self, column, value)
         print("\nYour data:")
         for row in search_results:
-            data = dict(zip(sqLite_columns, row))
+            data = dict(zip(sqlServer_columns, row))
             data_list.append(data)
             print(f"\nBook Number {i}:")
             i += 1
@@ -24,7 +24,7 @@ class SqLiteService:
         return data_list
 
     def update_book(self, data, column, value):
-        user_input = int(input("\nEnter Book Numbe: "))
+        user_input = int(input("\nEnter Book Number: "))
         if user_input < 1 or user_input > len(data):
             print("\nInvalid book number...!")
             return
@@ -44,13 +44,13 @@ class SqLiteService:
             print("No changes.")
             return
 
-        print(sqlite_repository.BookRepository.update_book(self, column, value, updates))
+        print(sqlServer_repository.BookRepository.update_book(self, column, value, updates))
 
     def search_member(self, column, value):
         data_list = []
         i = 1
-        sqLite_columns = ["id", "first_name", "last_name", "phone_number", "status", "join_date"]
-        search_results = sqlite_repository.MemberRepository().search_member(column, value)
+        sqLite_columns = ["id", "first name", "last name", "phone number", "status", "join date"]
+        search_results = sqlServer_repository.MemberRepository().search_member(column, value)
         print("\nYour data:")
         for row in search_results:
             data = dict(zip(sqLite_columns, row))
@@ -82,4 +82,4 @@ class SqLiteService:
             print("No changes.")
             return
 
-        print(sqlite_repository.MemberRepository.update_member(self, column, value, updates))
+        print(sqlServer_repository.MemberRepository.update_member(self, column, value, updates))

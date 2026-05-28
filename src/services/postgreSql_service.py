@@ -1,18 +1,19 @@
-from src.repositories import sqlite_repository
-from src.storages.sqlite_storage import SqliteStorage
+from src.repositories import postgreSql_repository
+from src.storages.postgreSql_storage import PostgreSqlStorage
 
 
-class SqLiteService:
+class PostgreSqlService:
     def __init__(self):
-        self.storage = SqliteStorage()
+        self.storage = PostgreSqlStorage()
 
     def search_book(self, column, value):
         data_list = []
         i = 1
         sqLite_columns = [
-            "id", "isbn", "title", "author name",
-            "publication year", "page count", "genre", "book status", "count"]
-        search_results = sqlite_repository.BookRepository().search_book(column, value)
+            "id", "isbn", "book_title", "author_name",
+            "publication_year", "page_count", "genre", "book_status",
+            "physical_version", "digital_version", "count"]
+        search_results = postgreSql_repository.BookRepository.search_book(self, column, value)
         print("\nYour data:")
         for row in search_results:
             data = dict(zip(sqLite_columns, row))
@@ -24,7 +25,7 @@ class SqLiteService:
         return data_list
 
     def update_book(self, data, column, value):
-        user_input = int(input("\nEnter Book Numbe: "))
+        user_input = int(input("\nEnter Book Number: "))
         if user_input < 1 or user_input > len(data):
             print("\nInvalid book number...!")
             return
@@ -44,13 +45,13 @@ class SqLiteService:
             print("No changes.")
             return
 
-        print(sqlite_repository.BookRepository.update_book(self, column, value, updates))
+        print(postgreSql_repository.BookRepository.update_book(self, column, value, updates))
 
     def search_member(self, column, value):
         data_list = []
         i = 1
-        sqLite_columns = ["id", "first_name", "last_name", "phone_number", "status", "join_date"]
-        search_results = sqlite_repository.MemberRepository().search_member(column, value)
+        sqLite_columns = ["id", "first name", "last name", "phone number", "status", "join date"]
+        search_results = postgreSql_repository.MemberRepository().search_member(column, value)
         print("\nYour data:")
         for row in search_results:
             data = dict(zip(sqLite_columns, row))
@@ -82,4 +83,4 @@ class SqLiteService:
             print("No changes.")
             return
 
-        print(sqlite_repository.MemberRepository.update_member(self, column, value, updates))
+        print(postgreSql_repository.MemberRepository.update_member(self, column, value, updates))
