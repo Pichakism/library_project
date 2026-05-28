@@ -1,12 +1,5 @@
-from src.models.books import Book
-from src.storages.sqlite_storage import SqliteStorage
-from src.storages.mysql_storage import MySqlStorage
-from src.storages.postgreSql_storage import PostgreSqlStorage
-from src.storages.sqlServer_storage import SqlServerStorage
-from src.storages.sqlite_storage import SqliteStorage
 from src.controler.book_controler import book_managment
 from src.controler.member_controler import member_managment
-from src.repositories.sqlite_repository import *
 from src.bootstrap import Bootstrap
 
 # Main entry point of the program
@@ -14,7 +7,7 @@ from src.bootstrap import Bootstrap
 # - Shows starter menu
 # - Routes user to selected management module
 def starter():
-    bootstrap = Bootstrap(MySqlStorage(), PostgreSqlStorage(), SqliteStorage(), SqlServerStorage())
+    bootstrap = Bootstrap()
     bootstrap.run()
     print("\nApplication started...")
     while True:

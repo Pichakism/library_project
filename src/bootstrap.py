@@ -1,123 +1,71 @@
-import mysql.connector
-
+from src.storages.sqlite_storage import SqliteStorage
+from src.storages.mysql_storage import MySqlStorage
+from src.storages.postgreSql_storage import PostgreSqlStorage
+from src.storages.sqlServer_storage import SqlServerStorage
+from src.storages.sqlite_storage import SqliteStorage
 class Bootstrap:
-    def __init__(self, mysql_storage, psql_storage, sqlite_storage, sqlServer_storage):
+    def __init__(self):
+        # -------------------------
+        # REGISTER ALL DATABASES
+        # -------------------------
+        # Central place for all database implementations
+        self.storages = {
+            "MySQL": MySqlStorage(),
+            "PostgreSQL": PostgreSqlStorage(),
+            "SQLite": SqliteStorage(),
+            "SQLServer": SqlServerStorage()
+        }
 
-        self.mysql = mysql_storage
-        self.psql = psql_storage
-        self.sqlite = sqlite_storage
-        self.sqlServer = sqlServer_storage
-        self.mysql_storage = None
-        self.psql_storage = None
-        self.sqlite_storage = None
-        self.sqlServer_storage = None
+        # active databases that successfully connected
+        self.active_storages = {}
 
-
+    # -------------------------
+    # CONNECT DATABASES
+    # -------------------------
+    # Try to connect all registered databases
+    # Only working ones will be activated
     def get_storage(self):
-        try:
-            self.mysql.connect()
-            self.mysql_storage = self.mysql
-            print("[OK] MySQL Load...")
-        except Exception as e:
-            print("[WARN] MySQL Load failed!!!")
-            self.mysql_storage = None
-        try:
-            self.psql.connect()
-            self.psql_storage = self.psql
-            print("[OK] PostgreSQL Load...")
-        except Exception as e:
-            print("[WARN] PostgreSQL Load failed!!!")
-            self.psql_storage = None
-        try:
-            self.sqlite.connect()
-            self.sqlite_storage = self.sqlite
-            print("[OK] SqLite Load...")
-        except Exception as e:
-            print("[WARN] SqLite Load failed!!!")
-            self.sqlite_storage = None
-        try:
-            self.sqlServer.connect()
-            self.sqlServer_storage = self.sqlServer
-            print("[OK] SQL Server Load...")
-        except Exception as e:
-            print("[WARN] SQl Server Load failed!!!")
-            self.sqlServer_storage = None
+        for name, storage in self.storages.items():
+            try:
+                storage.connect()
+                self.active_storages[name] = storage
+                print(f"[OK] {name} Load...")
+            except Exception as e:
+                print(f"[WARN] {name} Load failed!!!")
 
-
-    def first_mySql_setup(self):
-        self.mysql.ensure_metadata_table()
+    # -------------------------
+    # GENERIC FIRST-TIME SETUP
+    # -------------------------
+    # Runs initial setup only once per database
+    def first_setup(self, name, storage):
         try:
-            if self.mysql.is_setup_completed():
-                print("[OK] MySQL Setup already completed.")
+            storage.ensure_metadata_table()
+
+            if storage.is_setup_completed():
+                print(f"[OK] {name} Setup already completed.")
                 return
-            print("[INFO] Running first setup...")
-            self.mysql.create_tables()
-            self.mysql.mark_setup_completed()
-            print("[OK] *MySQL* Setup completed.")
+
+            print(f"[INFO] Running first setup... {name}")
+            storage.create_tables()
+            storage.mark_setup_completed()
+
+            print(f"[OK] *{name}* Setup completed.")
+
         except Exception as e:
-            print("\nERROR: ", e)
+            print(f"[ERROR] {name} setup failed:", e)
 
-    def first_pSql_setup(self):
-        self.psql.ensure_metadata_table()
-        try:
-            if self.psql.is_setup_completed():
-                print("[OK] PostgreSQL Setup already completed.")
-                return
-            print("[INFO] Running first setup...")
-            self.psql.create_tables()
-            self.psql.mark_setup_completed()
-            print("[OK] *PostgreSQL* Setup completed.")
-        except Exception as e:
-            print("\nERROR: ", e)
-
-    def first_sqLite_setup(self):
-        self.sqlite.ensure_metadata_table()
-        try:
-            if self.sqlite.is_setup_completed():
-                print("[OK] SqLite Setup already completed.")
-                return
-            print("[INFO] Running first setup...")
-            self.sqlite.create_tables()
-            self.sqlite.mark_setup_completed()
-            print("[OK] *SqLite* Setup completed.")
-        except Exception as e:
-            print("\nERROR: ", e)
-
-    def first_sqlServer_setup(self):
-        self.sqlServer.ensure_metadata_table()
-        try:
-            if self.sqlServer.is_setup_completed():
-                print("[OK] SQl Server Setup already completed.")
-                return
-            print("[INFO] Running first setup...")
-            self.sqlServer.create_tables()
-            self.sqlServer.mark_setup_completed()
-            print("[OK] *SQl Server* Setup completed.")
-        except Exception as e:
-            print("\nERROR: ", e)
-
-
+    # -------------------------
+    # RUN BOOTSTRAP PROCESS
+    # -------------------------
     def run(self):
+        # Step 1: connect all databases
         self.get_storage()
 
-        if self.mysql_storage is None:
-            print("mySQL storage NOT available")
-        else:
-            self.first_mySql_setup()
+        # Step 2: setup only active databases
+        for name, storage in self.active_storages.items():
+            self.first_setup(name, storage)
 
-        if self.psql_storage is None:
-            print("postgreSQL storage NOT available")
-        else:
-            self.first_pSql_setup()
-
-        if self.sqlite_storage is None:
-            print("SqLite storage NOT available")
-        else:
-            self.first_sqLite_setup()
-
-        if self.sqlServer_storage is None:
-            print("SQl Server storage NOT available")
-        else:
-            self.first_sqlServer_setup()
-
-        return
+        # Step 3: report inactive ones
+        for name in self.storages:
+            if name not in self.active_storages:
+                print(f"[INFO] {name} storage NOT available")
