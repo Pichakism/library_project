@@ -1,30 +1,23 @@
-# -------------------------
-# MEMBER SERVICE LAYER
-# -------------------------
-# This service acts as a bridge between controller and repository layer
-# It contains no user interaction logic
-# It only delegates operations to repository and formats raw database output
+from src.repositories.sqlite_repository import MemberRepository
+from src.services.sync_manager import SyncManager
+from src.services.sync_serrvice import SyncDB
+import threading
+
 class MemberService:
-    def __init__(self, repo, storage):
-        # Repository is responsible for all database operations
-        # Storage is injected for abstraction and future extensibility (not used directly yet)
-        self.repo = repo
-        self.storage = storage
+    def __init__(self):
+        self.sqlite_repo = MemberRepository()
+        self.sync_manager = SyncManager()
 
-    # -------------------------
-    # INSERT MEMBER
-    # -------------------------
-    # Sends member object to repository to be stored in database
-    def insert_member(self, book):
-        return self.repo.insert_member(book)
+    def insert_member(self, member):
+        self.sqlite_repo.insert_member(member)
+        threading.Thread(
+            target=SyncDB(self.sync_manager).sync_insert,
+            args=(member,),
+            daemon=True
+        ).start()
 
-    # -------------------------
-    # SELECT MEMBER
-    # -------------------------
-    # Retrieves raw rows from repository and converts them into structured dictionaries
-    # to make them usable in controller/UI layer
     def select_member(self, column, value):
-        rows = self.repo.select_member(column, value)
+        rows = self.sqlite_repo.select_member(column, value)
         return [
             {
                 "id": row[0],
@@ -37,16 +30,18 @@ class MemberService:
             for row in rows
         ]
 
-    # -------------------------
-    # UPDATE MEMBER
-    # -------------------------
-    # Sends update request to repository with filter and new values
-    def update_member(self, column, value, updates):
-        return self.repo.update_member(column, value, updates)
+    def update_book(self, column, value, updates):
+        self.sqlite_repo.update_member(column, value, updates)
+        threading.Thread(
+            target=SyncDB(self.sync_manager).sync_update,
+            args=(column, value, updates),
+            daemon=True
+        ).start()
 
-    # -------------------------
-    # DELETE MEMBER
-    # -------------------------
-    # Deletes member records based on given condition
     def delete_member(self, column, value):
-        return self.repo.delete_member(column, value)
+        self.sqlite_repo.delete_member(column, value)
+        threading.Thread(
+            target=SyncDB(self.sync_manager).sync_delete,
+            args=(column, value),
+            daemon=True
+        ).start()

@@ -13,7 +13,7 @@ class Bootstrap:
             "MySQL": MySqlStorage(),
             "PostgreSQL": PostgreSqlStorage(),
             "SQLite": SqliteStorage(),
-            # "SQLServer": SqlServerStorage()
+            "SQLServer": SqlServerStorage()
         }
 
         # active databases that successfully connected

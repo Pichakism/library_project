@@ -21,18 +21,18 @@ member_fields = {
 # Gets member info from user input
 # creates Member object
 # sends it to service layer for insert operation
-def add_member(chosen_db):
+def add_member():
     print("\n-----Add Member Menu-----")
     # id = input("\nEnter member ID: ")
     first_name = input("Enter member first name: ")
     last_name = input("Enter member last name: ")
     phone_number = input("Enter member phone number: ")
     member_status = int(input("\n1 - Available\n2 - Unavailable\nEnter member ststus: "))
-    join_date = str(gregorian_to_jalali(datetime.date.today().year, datetime.date.today().month, datetime.date.today().day))
+    join_date = datetime.date.today()
 
     member = Member(first_name, last_name, phone_number,Member_Status(member_status), join_date)
     
-    service = get_member_service(chosen_db)
+    service = get_member_service()
     print(service.insert_member(member))
 
 # -------------------------
@@ -67,13 +67,13 @@ def user_input_for_member_search():
 # -------------------------
 # Searches member data using service layer
 # prints formatted output
-def search_member(chosen_db):
+def search_member():
     result = user_input_for_member_search()
     if result is None:
         return
     column, value = result
 
-    service = get_member_service(chosen_db)
+    service = get_member_service()
     data = service.select_member(member_fields[str(column)], value)
     print("\nYour data:")
     for i, row in enumerate(data, 1):
@@ -90,12 +90,12 @@ def search_member(chosen_db):
 # Selects record from search result
 # gets updated values from user
 # sends update request to service layer
-def edit_member(chosen_db):
-    result = search_member(chosen_db)
+def edit_member():
+    result = search_member()
     if not result:
         return
     data, column, value = result
-    service = get_member_service(chosen_db)
+    service = get_member_service()
 
     user_input = int(input("\nEnter Member Number: "))
     if user_input < 1 or user_input > len(data):
@@ -108,6 +108,8 @@ def edit_member(chosen_db):
     print("\nEnter new values (Enter to skip):")
 
     for k, v in selected.items():
+        if k == "id":
+            continue
         new_val = input(f"{k} ({v}): ")
         if new_val.strip():
             updates[k] = new_val
@@ -123,7 +125,7 @@ def edit_member(chosen_db):
 # -------------------------
 # Deletes member based on selected column
 # calls service layer delete method
-def remove_member(chosen_db):
+def remove_member():
     while True:
         column = int(input(
             "\n1 - ID"
@@ -138,7 +140,7 @@ def remove_member(chosen_db):
             return
         value = input("\nWhat is the desired value to search for? : ")
 
-        service = get_member_service(chosen_db)
+        service = get_member_service()
         print(service.delete_member(member_fields[str(column)], value))
 
 # -------------------------
@@ -158,21 +160,21 @@ def member_managment():
             "Enter your request: "))
         if user_input == "0":
             return
-        print(
-            "\n---Choose Database---"
-            "\nWhat Database do you want?\n"
-            "1 - CSV\n"
-            "2 - sqLite\n"
-            "3 - mySql\n"
-            "4 - postgreSql\n"
-            "5 - SQL Server\n"
-            )
-        database_chosen = input("\n\nEnter number of your request: ")
+        # print(
+        #     "\n---Choose Database---"
+        #     "\nWhat Database do you want?\n"
+        #     "1 - CSV\n"
+        #     "2 - sqLite\n"
+        #     "3 - mySql\n"
+        #     "4 - postgreSql\n"
+        #     "5 - SQL Server\n"
+        #     )
+        # database_chosen = input("\n\nEnter number of your request: ")
         if user_input == "1":
-            add_member(database_chosen)
+            add_member()
         elif user_input == "2":
-            search_member(database_chosen)
+            search_member()
         elif user_input == "3":
-            edit_member(database_chosen)
+            edit_member()
         elif user_input == "4":
-            remove_member(database_chosen)
+            remove_member()

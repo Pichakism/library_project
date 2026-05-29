@@ -17,7 +17,7 @@ loan_fields = {
 # LOAN BOOK
 # -------------------------
 # Handles book borrowing process between book + member search
-def add_loan(chosen_db):
+def add_loan():
     book_result = user_input_for_book_search()
     member_result = user_input_for_member_search()
     if book_result is None:
@@ -27,8 +27,8 @@ def add_loan(chosen_db):
         return
     member_column, member_value = member_result
 
-    book_service = get_book_service(chosen_db)
-    member_service = get_member_service(chosen_db)
+    book_service = get_book_service()
+    member_service = get_member_service()
 
     book_data = book_service.select_book(book_fields[str(book_column)], book_value)
     member_data = member_service.select_member(member_fields[str(member_column)], member_value)
@@ -55,10 +55,9 @@ def add_loan(chosen_db):
 
     book_id = book_data[user_book_input - 1]["id"]
     member_id = member_data[user_member_input - 1]["id"]
-    loan = Loan(book_id, member_id,
-                str(gregorian_to_jalali(datetime.date.today().year, datetime.date.today().month, datetime.date.today().day)))
+    loan = Loan(book_id, member_id, datetime.date.today())
 
-    service = get_loan_service(chosen_db)
+    service = get_loan_service()
     print(service.insert_loan(loan))
 
 
@@ -82,13 +81,13 @@ def user_input_for_search():
         else:
             return column, value
 
-def search_loan(chosen_db):
+def search_loan():
     result = user_input_for_search()
     if result is None:
         return
     column, value = result
 
-    service = get_loan_service(chosen_db)
+    service = get_loan_service()
     data = service.select_loan(loan_fields[str(column)], value)
     print("\nYour data:")
     for i, row in enumerate(data, 1):
@@ -98,12 +97,12 @@ def search_loan(chosen_db):
 
     return data, loan_fields[str(column)], value
 
-def edit_loan(chosen_db):
-    result = search_loan(chosen_db)
+def edit_loan():
+    result = search_loan()
     if not result:
         return
     data, column, value = result
-    service = get_loan_service(chosen_db)
+    service = get_loan_service()
 
     user_input = int(input("\nEnter Book Number: "))
     if user_input < 1 or user_input > len(data):
@@ -126,7 +125,7 @@ def edit_loan(chosen_db):
 
     print(service.update_loan(column, value, updates))
 
-def remove_loan(chosen_db):
+def remove_loan():
     while True:
         column = int(input(
             "\n-----Delete Book Menu-----\n"
@@ -140,7 +139,7 @@ def remove_loan(chosen_db):
             return
         value = input("\nWhat is the desired value to search for? : ")
 
-        service = get_loan_service(chosen_db)
+        service = get_loan_service()
         print(service.delete_loan(loan_fields[str(column)], value))
 
 def loan_managment():
@@ -156,21 +155,21 @@ def loan_managment():
             "Enter your request: "))
         if user_input == "0":
             return
-        print(
-            "\n---Choose Database---"
-            "\nWhat Database do you want?\n"
-            "1 - CSV\n"
-            "2 - sqLite\n"
-            "3 - mySql\n"
-            "4 - postgreSql\n"
-            "5 - SQL Server\n"
-            )
-        database_chosen = input("\nEnter number of your request: ")
+        # print(
+        #     "\n---Choose Database---"
+        #     "\nWhat Database do you want?\n"
+        #     "1 - CSV\n"
+        #     "2 - sqLite\n"
+        #     "3 - mySql\n"
+        #     "4 - postgreSql\n"
+        #     "5 - SQL Server\n"
+        #     )
+        # database_chosen = input("\nEnter number of your request: ")
         if user_input == "1":
-            add_loan(database_chosen)
+            add_loan()
         elif user_input == "2":
-            search_loan(database_chosen)
+            search_loan()
         elif user_input == "3":
-            edit_loan(database_chosen)
+            edit_loan()
         elif user_input == "4":
-            remove_loan(database_chosen)
+            remove_loan()

@@ -25,7 +25,7 @@ class BookRepository:
             print("SQL ERROR:", e)
             raise
 
-    def insert_book(self, book):
+    def insert_book(self, book, from_queue=False):
         query = """
             INSERT INTO books (
                 isbn,
@@ -58,7 +58,7 @@ class BookRepository:
             )
             return "\nBook added successfully...\n"
         except Exception as e:
-            print("SQL ERROR:", e)
+            # print("SQL ERROR:", e)
             raise
 
     def update_book(self, column, value, updates):
@@ -73,7 +73,7 @@ class BookRepository:
             self.storage.execute_row(query, params)
             return "\nBook updated successfully...\n"
         except Exception as e:
-            print("SQL ERROR:", e)
+            # print("SQL ERROR:", e)
             raise
 
     def delete_book(self, column, value):
@@ -92,7 +92,7 @@ class BookRepository:
             self.storage.execute_row(query, (value,))
             return "\nBook deleted successfully...\n"
         except Exception as e:
-            print("SQL ERROR:", e)
+            # print("SQL ERROR:", e)
             raise
 
 class MemberRepository:
@@ -114,7 +114,7 @@ class MemberRepository:
             results = self.storage.fetch_all(query, (f"%{value}%",))
             return results
         except Exception as e:
-            print("SQL ERROR:", e)
+            # print("SQL ERROR:", e)
             raise
 
     def insert_member(self, member):
@@ -139,10 +139,9 @@ class MemberRepository:
             )
             return "\nMember added successfully...\n"
         except Exception as e:
-            print("SQL ERROR:", e)
+            # print("SQL ERROR:", e)
             raise
 
-    # TODO :                                                                                    
     def update_member(self, column, value, updates):
         set_clause = ", ".join(f"{column} = ?" for column in updates)
         query = f"""
@@ -155,7 +154,7 @@ class MemberRepository:
             self.storage.execute_row(query, params)
             return "\nMember updated successfully...\n"
         except Exception as e:
-            print("SQL ERROR:", e)
+            # print("SQL ERROR:", e)
             raise
 
     def delete_member(self, column, value):
@@ -172,7 +171,7 @@ class MemberRepository:
             self.storage.execute_row(query, (value,))
             return "\nMember deleted successfully...\n"
         except Exception as e:
-            print("SQL ERROR:", e)
+            # print("SQL ERROR:", e)
             raise
 
     # TODO :                                                                                    
@@ -195,7 +194,7 @@ class LoanRepository:
             results = self.storage.fetch_all(query, (f"%{value}%",))
             return results
         except Exception as e:
-            print("SQL ERROR:", e)
+            # print("SQL ERROR:", e)
             raise
 
     def insert_loan(self, loan):
@@ -216,7 +215,7 @@ class LoanRepository:
             )
             return "\nloan added successfully...\n"
         except Exception as e:
-            print("SQL ERROR:", e)
+            # print("SQL ERROR:", e)
             raise
     
     def update_loan(self):
@@ -237,5 +236,5 @@ class LoanRepository:
             results = self.storage.fetch_all(query, (value,))
             return results
         except Exception as e:
-            print("SQL ERROR:", e)
+            # print("SQL ERROR:", e)
             raise

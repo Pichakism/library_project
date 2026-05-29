@@ -55,14 +55,14 @@ class SqliteStorage:
                 last_name TEXT NOT NULL,
                 phone_number TEXT UNIQUE,
                 status TEXT,
-                join_date TEXT)"""
+                join_date DATE)"""
         )
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS loans (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 member_id INTEGER NOT NULL,
                 book_id INTEGER NOT NULL,
-                loan_date TEXT,
+                loan_date DATE,
                 FOREIGN KEY(member_id)
                     REFERENCES members(id),
                 FOREIGN KEY(book_id)

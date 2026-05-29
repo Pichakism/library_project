@@ -1,30 +1,23 @@
-# -------------------------
-# BOOK SERVICE LAYER
-# -------------------------
-# This service acts as a bridge between controller and repository layer
-# It does NOT handle user input/output logic
-# It only delegates operations to repository and formats raw data if needed
+from src.repositories.sqlite_repository import BookRepository
+from src.services.sync_manager import SyncManager
+from src.services.sync_serrvice import SyncDB
+import threading
+
 class BookService:
-    def __init__(self, repo, storage):
-        # Repository handles database operations
-        # Storage is injected for future abstraction (not directly used here yet)
-        self.repo = repo
-        self.storage = storage
+    def __init__(self):
+        self.sqlite_repo = BookRepository()
+        self.sync_manager = SyncManager()
 
-    # -------------------------
-    # INSERT BOOK
-    # -------------------------
-    # Sends Book object to repository for insertion
     def insert_book(self, book):
-        return self.repo.insert_book(book)
+        self.sqlite_repo.insert_book(book)
+        threading.Thread(
+            target=SyncDB(self.sync_manager).sync_insert,
+            args=(book,),
+            daemon=True
+        ).start()
 
-    # -------------------------
-    # SELECT BOOK
-    # -------------------------
-    # Retrieves raw rows from repository and converts them into dictionary format
-    # to make data easier for controller/UI layer
     def select_book(self, column, value):
-        rows = self.repo.select_book(column, value)
+        rows = self.sqlite_repo.select_book(column, value)
         return [
             {
                 "id": row[0],
@@ -42,28 +35,18 @@ class BookService:
             for row in rows
         ]
 
-    # -------------------------
-    # UPDATE BOOK
-    # -------------------------
-    # Sends update request to repository with selected filters and new values
     def update_book(self, column, value, updates):
-        return self.repo.update_book(column, value, updates)
+        self.sqlite_repo.update_book(column, value, updates)
+        threading.Thread(
+            target=SyncDB(self.sync_manager).sync_update,
+            args=(column, value, updates),
+            daemon=True
+        ).start()
 
-    # -------------------------
-    # DELETE BOOK
-    # -------------------------
-    # Deletes book records matching given condition
     def delete_book(self, column, value):
-        return self.repo.delete_book(column, value)
-
-    # -------------------------
-    # LOAN BOOK
-    # -------------------------
-    # Delegates loan operation between book and member to repository layer
-    def loan_book(self, book_search, member_search):
-        return self.repo.loan_book(
-            book_search[0],
-            book_search[1],
-            member_search[0],
-            member_search[1]
-        )
+        self.sqlite_repo.delete_book(column, value)
+        threading.Thread(
+            target=SyncDB(self.sync_manager).sync_delete,
+            args=(column, value),
+            daemon=True
+        ).start()

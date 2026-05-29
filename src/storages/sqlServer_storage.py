@@ -68,7 +68,7 @@ class SqlServerStorage:
                     last_name NVARCHAR(100) NOT NULL,
                     phone_number NVARCHAR(20) UNIQUE,
                     status NVARCHAR(50),
-                    join_date NVARCHAR(20)
+                    join_date DATE
                 )
                 """)
 

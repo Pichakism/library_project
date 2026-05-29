@@ -26,7 +26,7 @@ book_fields = {
 # Gets book info from user input,
 # creates Book object,
 # sends it to service layer for insertion
-def add_book(chosen_db):
+def add_book():
     print("\n-----Add Book Menu-----")
     isbn = input("\nEnter book ISBN: ")
     book_title = input("Enter book title: ")
@@ -52,7 +52,7 @@ def add_book(chosen_db):
             count)
 
     # Controller only communicates with service layer
-    service = get_book_service(chosen_db)
+    service = get_book_service()
     print(service.insert_book(book))
     
 # -------------------------
@@ -90,13 +90,13 @@ def user_input_for_book_search():
 # -------------------------
 # Delegates search operation to service layer
 # and prints formatted output
-def search_book(chosen_db):
+def search_book():
     result = user_input_for_book_search()
     if result is None:
         return
     column, value = result
 
-    service = get_book_service(chosen_db)
+    service = get_book_service()
     data = service.select_book(book_fields[str(column)], value)
     print("\nYour data:")
     for i, row in enumerate(data, 1):
@@ -112,12 +112,12 @@ def search_book(chosen_db):
 # Selects record from search result,
 # collects update fields,
 # sends update request to service layer
-def edit_book(chosen_db):
-    result = search_book(chosen_db)
+def edit_book():
+    result = search_book()
     if not result:
         return
     data, column, value = result
-    service = get_book_service(chosen_db)
+    service = get_book_service()
 
     user_input = int(input("\nEnter Book Number: "))
     if user_input < 1 or user_input > len(data):
@@ -130,6 +130,8 @@ def edit_book(chosen_db):
     print("\nEnter new values (Enter to skip):")
 
     for k, v in selected.items():
+        if k == "id":
+            continue
         new_val = input(f"{k} ({v}): ")
         if new_val.strip():
             updates[k] = new_val
@@ -144,7 +146,7 @@ def edit_book(chosen_db):
 # REMOVE BOOK
 # -------------------------
 # Deletes book based on selected search criteria
-def remove_book(chosen_db):
+def remove_book():
     while True:
         column = int(input(
             "\n-----Delete Book Menu-----\n"
@@ -164,7 +166,7 @@ def remove_book(chosen_db):
             return
         value = input("\nWhat is the desired value to search for? : ")
 
-        service = get_book_service(chosen_db)
+        service = get_book_service()
         print(service.delete_book(book_fields[str(column)], value))
 
 # -------------------------
@@ -185,21 +187,21 @@ def book_managment():
             "Enter your request: "))
         if user_input == "0":
             return
-        print(
-            "\n---Choose Database---"
-            "\nWhat Database do you want?\n"
-            "1 - CSV\n"
-            "2 - sqLite\n"
-            "3 - mySql\n"
-            "4 - postgreSql\n"
-            "5 - SQL Server\n"
-            )
-        database_chosen = input("\nEnter number of your request: ")
+        # print(
+        #     "\n---Choose Database---"
+        #     "\nWhat Database do you want?\n"
+        #     "1 - CSV\n"
+        #     "2 - sqLite\n"
+        #     "3 - mySql\n"
+        #     "4 - postgreSql\n"
+        #     "5 - SQL Server\n"
+        #     )
+        # database_chosen = input("\nEnter number of your request: ")
         if user_input == "1":
-            add_book(database_chosen)
+            add_book()
         elif user_input == "2":
-            search_book(database_chosen)
+            search_book()
         elif user_input == "3":
-            edit_book(database_chosen)
+            edit_book()
         elif user_input == "4":
-            remove_book(database_chosen)
+            remove_book()

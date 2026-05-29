@@ -69,7 +69,7 @@ class MySqlStorage:
                 last_name VARCHAR(100) NOT NULL,
                 phone_number VARCHAR(20) UNIQUE,
                 status VARCHAR(50),
-                join_date VARCHAR(20)
+                join_date DATE
         )
         """
         )
