@@ -2,8 +2,8 @@ from src.controler.book_controler import book_managment
 from src.controler.member_controler import member_managment
 from src.controler.loanBook_controler import loan_managment
 from src.bootstrap import Bootstrap
-from src.services.sync_worker import SyncWorker
-from src.services.sync_manager import SyncManager
+from src.services.sync_data.sync_worker import SyncWorker
+from src.services.sync_data.sync_manager import SyncManager
 
 # Main entry point of the program
 # - Initializes databases

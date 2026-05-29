@@ -1,12 +1,12 @@
 from src.storages.mysql_storage import MySqlStorage
-from src.services.sync_manager import SyncManager
+from src.services.sync_data.sync_manager import SyncManager
 class BookRepository:
     def __init__(self):
         self.storage = MySqlStorage()
         self.sync = SyncManager()
 
     def select_book(self, column, value):
-        allowed_column = ["id", "isbn", "book_title", "author_name",
+        allowed_column = ["id", "book_isbn", "book_title", "author_name",
                           "publication_year", "page_count", "genre",
                           "book_status", "physical_version", "digital_version", "count"]
 
@@ -25,11 +25,11 @@ class BookRepository:
             # print("SQL ERROR:", e)
             raise
 
-    def insert_book(self, book, from_queue=False):
+    def insert_book(self, book):
         
         query = """
             INSERT INTO books (
-                isbn,
+                book_isbn,
                 book_title,
                 author_name,
                 publication_year,
@@ -44,7 +44,7 @@ class BookRepository:
             self.storage.execute(
                 query,
                 (
-                    book.isbn,
+                    book.book_isbn,
                     book.book_title,
                     book.author_name,
                     book.publication_year,
@@ -62,7 +62,7 @@ class BookRepository:
             raise
 
     def delete_book(self, column, value):
-        allowed_column = ["id", "isbn", "book_title", "author_name",
+        allowed_column = ["id", "book_isbn", "book_title", "author_name",
                           "publication_year", "page_count", "genre",
                           "book_status", "physical_version", "digital_version", "count"]
 
@@ -102,7 +102,7 @@ class MemberRepository:
         self.storage = MySqlStorage()
 
     def select_member(self, column, value):
-        allowed_column = ["id", "first_name", "last_name", "phone_number", "status", "join_date"]
+        allowed_column = ["id", "member_nID", "first_name", "last_name", "phone_number", "status", "join_date"]
 
         if column not in allowed_column:
             raise ValueError("Invalide value...!")
@@ -123,20 +123,22 @@ class MemberRepository:
     def insert_member(self, member):
         query = """
             INSERT INTO members (
+                member_nID,
                 first_name,
                 last_name,
                 phone_number,
                 status,
-                join_date) VALUES (%s, %s, %s, %s, %s)
+                join_date) VALUES (%s, %s, %s, %s, %s, %s)
         """
         try:
             self.storage.execute(
                 query,
                 (
+                    member.member_nID,
                     member.first_name,
                     member.last_name,
                     member.phone_number,
-                    member.member_status.name,
+                    member.status.name,
                     member.join_date
                 )
             )
@@ -146,7 +148,7 @@ class MemberRepository:
             raise
 
     def delete_member(self, column, value):
-        allowed_column = ["id", "first_name", "last_name", "phone_number", "status", "join_date"]
+        allowed_column = ["id", "member_nID", "first_name", "last_name", "phone_number", "status", "join_date"]
 
         if column not in allowed_column:
             raise ValueError("Invalide value...!")
@@ -186,7 +188,7 @@ class LoanRepository:
         self.storage = MySqlStorage()
 
     def select_loan(self, column, value):
-        allowed_column = ["id", "book_id", "member_id", "loan_date"]
+        allowed_column = ["id", "book_isbn", "member_nID", "loan_date"]
 
         if column not in allowed_column:
             raise ValueError("Invalide Value...!")
@@ -207,8 +209,8 @@ class LoanRepository:
     def insert_loan(self, loan):
         query = """
             INSERT INTO loans(
-            member_id,
-            book_id,
+            book_isbn,
+            member_nID,
             loan_date) VALUES (%s, %s, %s)
         """
 
@@ -216,8 +218,8 @@ class LoanRepository:
             self.storage.execute(
                 query,
                 (
-                    loan.member_id,
-                    loan.book_id,
+                    loan.book_isbn,
+                    loan.member_nID,
                     loan.loan_date
                 )
             )
@@ -230,7 +232,7 @@ class LoanRepository:
         ...
 
     def delete_loan(self, column, value):
-        allowed_column = ["id", "book_id", "member_id", "loan_date"]
+        allowed_column = ["id", "book_isbn", "member_nID", "loan_date"]
 
         if column not in allowed_column:
             raise ValueError("Invalide Value...!")

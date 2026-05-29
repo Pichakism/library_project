@@ -2,8 +2,8 @@
 # - Stores all metadata related to a book
 # - Used for creating book objects before saving
 class Book:
-    def __init__(self, isbn, book_title, author_name, publication_year, page_count, genre, book_status, physical_version, digital_version, count):
-        self.isbn = isbn
+    def __init__(self, book_isbn, book_title, author_name, publication_year, page_count, genre, book_status, physical_version, digital_version, count):
+        self.book_isbn = book_isbn
         self.book_title = book_title
         self.author_name = author_name
         self.publication_year = publication_year
@@ -18,7 +18,7 @@ class Book:
     # - Used for printing book details in a readable format
     def __str__(self):
         return(
-            f"ISBN = {self.isbn}\n"
+            f"ISBN = {self.book_isbn}\n"
             f"Book title = {self.book_title}\n"
             f"Auther name = {self.author_name}\n"
             f"Publication date = {self.publication_year}\n"

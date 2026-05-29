@@ -47,7 +47,7 @@ class SqlServerStorage:
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='books' AND xtype='U')
                 CREATE TABLE books (
                     id INT IDENTITY(1,1) PRIMARY KEY,
-                    isbn NVARCHAR(50) UNIQUE NOT NULL,
+                    book_isbn NVARCHAR(50) UNIQUE NOT NULL,
                     book_title NVARCHAR(255) NOT NULL,
                     author_name NVARCHAR(255) NOT NULL,
                     publication_year INT,
@@ -64,6 +64,7 @@ class SqlServerStorage:
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='members' AND xtype='U')
                 CREATE TABLE members (
                     id INT IDENTITY(1,1) PRIMARY KEY,
+                    member_nID NVARCHAR(20) UNIQUE NOT NULL,
                     first_name NVARCHAR(100) NOT NULL,
                     last_name NVARCHAR(100) NOT NULL,
                     phone_number NVARCHAR(20) UNIQUE,
@@ -76,11 +77,11 @@ class SqlServerStorage:
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='loans' AND xtype='U')
                 CREATE TABLE loans (
                     id INT IDENTITY(1,1) PRIMARY KEY,
-                    member_id INT NOT NULL,
-                    book_id INT NOT NULL,
+                    book_isbn NVARCHAR(50) NOT NULL,
+                    member_nID NVARCHAR(20) NOT NULL,
                     loan_date DATE,
-                    FOREIGN KEY(member_id) REFERENCES members(id) ON DELETE CASCADE,
-                    FOREIGN KEY(book_id) REFERENCES books(id) ON DELETE CASCADE
+                    FOREIGN KEY(member_nID) REFERENCES members(member_nID) ON DELETE CASCADE,
+                    FOREIGN KEY(book_isbn) REFERENCES books(book_isbn) ON DELETE CASCADE
                 )
                 """)
 

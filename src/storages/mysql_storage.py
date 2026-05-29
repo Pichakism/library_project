@@ -48,7 +48,7 @@ class MySqlStorage:
         """
             CREATE TABLE IF NOT EXISTS books (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                isbn VARCHAR(50) UNIQUE NOT NULL,
+                book_isbn VARCHAR(50) UNIQUE NOT NULL,
                 book_title VARCHAR(255) NOT NULL,
                 author_name VARCHAR(255) NOT NULL,
                 publication_year INT,
@@ -65,6 +65,7 @@ class MySqlStorage:
         """
             CREATE TABLE IF NOT EXISTS members (
                 id INT AUTO_INCREMENT PRIMARY KEY,
+                member_nID VARCHAR(20) UNIQUE NOT NULL,
                 first_name VARCHAR(100) NOT NULL,
                 last_name VARCHAR(100) NOT NULL,
                 phone_number VARCHAR(20) UNIQUE,
@@ -77,14 +78,14 @@ class MySqlStorage:
         """
             CREATE TABLE IF NOT EXISTS loans (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                member_id INT NOT NULL,
-                book_id INT NOT NULL,
+                book_isbn VARCHAR(50) NOT NULL,
+                member_nID VARCHAR(20) NOT NULL,
                 loan_date DATE,
-                FOREIGN KEY(member_id)
-                    REFERENCES members(id)
+                FOREIGN KEY(member_nID)
+                    REFERENCES members(member_nID)
                     ON DELETE CASCADE,
-                FOREIGN KEY(book_id)
-                    REFERENCES books(id)
+                FOREIGN KEY(book_isbn)
+                    REFERENCES books(book_isbn)
                     ON DELETE CASCADE
         )
         """

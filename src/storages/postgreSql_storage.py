@@ -48,7 +48,7 @@ class PostgreSqlStorage:
         """
             CREATE TABLE IF NOT EXISTS books (
                 id SERIAL PRIMARY KEY,
-                isbn TEXT UNIQUE NOT NULL,
+                book_isbn TEXT UNIQUE NOT NULL,
                 book_title TEXT NOT NULL,
                 author_name TEXT NOT NULL,
                 publication_year INTEGER,
@@ -65,6 +65,7 @@ class PostgreSqlStorage:
         """
             CREATE TABLE IF NOT EXISTS members (
                 id SERIAL PRIMARY KEY,
+                member_nID TEXT UNIQUE NOT NULL,
                 first_name TEXT NOT NULL,
                 last_name TEXT NOT NULL,
                 phone_number TEXT UNIQUE,
@@ -77,14 +78,14 @@ class PostgreSqlStorage:
         """
             CREATE TABLE IF NOT EXISTS loans (
                 id SERIAL PRIMARY KEY,
-                member_id INTEGER NOT NULL,
-                book_id INTEGER NOT NULL,
+                book_isbn TEXT NOT NULL,
+                member_nID TEXT NOT NULL,
                 loan_date DATE,
-                FOREIGN KEY(member_id)
-                    REFERENCES members(id)
+                FOREIGN KEY(member_nID)
+                    REFERENCES members(member_nID)
                     ON DELETE CASCADE,
-                FOREIGN KEY(book_id)
-                    REFERENCES books(id)
+                FOREIGN KEY(book_isbn)
+                    REFERENCES books(book_isbn)
                     ON DELETE CASCADE
         )        
         """

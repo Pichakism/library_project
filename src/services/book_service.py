@@ -1,6 +1,6 @@
 from src.repositories.sqlite_repository import BookRepository
-from src.services.sync_manager import SyncManager
-from src.services.sync_serrvice import SyncDB
+from src.services.sync_data.sync_manager import SyncManager
+from src.services.sync_data.sync_serrvice import SyncDBForBook
 import threading
 
 class BookService:
@@ -11,7 +11,7 @@ class BookService:
     def insert_book(self, book):
         self.sqlite_repo.insert_book(book)
         threading.Thread(
-            target=SyncDB(self.sync_manager).sync_insert,
+            target=SyncDBForBook(self.sync_manager).sync_insert,
             args=(book,),
             daemon=True
         ).start()
@@ -38,7 +38,7 @@ class BookService:
     def update_book(self, column, value, updates):
         self.sqlite_repo.update_book(column, value, updates)
         threading.Thread(
-            target=SyncDB(self.sync_manager).sync_update,
+            target=SyncDBForBook(self.sync_manager).sync_update,
             args=(column, value, updates),
             daemon=True
         ).start()
@@ -46,7 +46,7 @@ class BookService:
     def delete_book(self, column, value):
         self.sqlite_repo.delete_book(column, value)
         threading.Thread(
-            target=SyncDB(self.sync_manager).sync_delete,
+            target=SyncDBForBook(self.sync_manager).sync_delete,
             args=(column, value),
             daemon=True
         ).start()

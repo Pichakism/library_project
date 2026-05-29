@@ -7,11 +7,11 @@ from src.services.service_factory import get_member_service
 
 # Mapping menu input numbers to actual database column names
 member_fields = {
-    "1": "id",
+    "1": "member_nID",
     "2": "first_name",
     "3": "last_name",
     "4": "phone_number",
-    "5": "member_status",
+    "5": "status",
     "6": "join_date"
 }
 
@@ -23,14 +23,14 @@ member_fields = {
 # sends it to service layer for insert operation
 def add_member():
     print("\n-----Add Member Menu-----")
-    # id = input("\nEnter member ID: ")
+    member_nID = input("Enter member national ID: ")
     first_name = input("Enter member first name: ")
     last_name = input("Enter member last name: ")
     phone_number = input("Enter member phone number: ")
     member_status = int(input("\n1 - Available\n2 - Unavailable\nEnter member ststus: "))
     join_date = datetime.date.today()
 
-    member = Member(first_name, last_name, phone_number,Member_Status(member_status), join_date)
+    member = Member(member_nID, first_name, last_name, phone_number,Member_Status(member_status), join_date)
     
     service = get_member_service()
     print(service.insert_member(member))
@@ -45,7 +45,7 @@ def user_input_for_member_search():
         column = int(input(
             "\n-----Search Member Menu-----\n"
             "How do you want to search?\n"
-            "1 - By ID\n"
+            "1 - BY National ID\n"
             "2 - By First name\n"
             "3 - By Last name\n"
             "4 - By Phone number\n"
@@ -128,7 +128,7 @@ def edit_member():
 def remove_member():
     while True:
         column = int(input(
-            "\n1 - ID"
+            "\n1 - National ID"
             "\n2 - First Name"
             "\n3 - Last Name"
             "\n4 - Phone Number"
@@ -160,16 +160,6 @@ def member_managment():
             "Enter your request: "))
         if user_input == "0":
             return
-        # print(
-        #     "\n---Choose Database---"
-        #     "\nWhat Database do you want?\n"
-        #     "1 - CSV\n"
-        #     "2 - sqLite\n"
-        #     "3 - mySql\n"
-        #     "4 - postgreSql\n"
-        #     "5 - SQL Server\n"
-        #     )
-        # database_chosen = input("\n\nEnter number of your request: ")
         if user_input == "1":
             add_member()
         elif user_input == "2":

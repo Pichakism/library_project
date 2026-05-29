@@ -2,7 +2,7 @@ import time
 import os
 import threading
 from datetime import datetime
-from src.services.sync_queue import SyncQueue
+from src.services.sync_data.sync_queue import SyncQueue
 
 
 def write_sync_log(message):

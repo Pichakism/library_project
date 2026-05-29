@@ -28,7 +28,7 @@ book_fields = {
 # sends it to service layer for insertion
 def add_book():
     print("\n-----Add Book Menu-----")
-    isbn = input("\nEnter book ISBN: ")
+    book_isbn = input("\nEnter book ISBN: ")
     book_title = input("Enter book title: ")
     author_name = input("Enter auther name: ")
     publication_year = input("Enter publication year: ")
@@ -40,7 +40,7 @@ def add_book():
     count = int(input("Enter count of book: "))
 
     # Domain object creation
-    book = Book(isbn,
+    book = Book(book_isbn,
             book_title,
             author_name,
             publication_year,

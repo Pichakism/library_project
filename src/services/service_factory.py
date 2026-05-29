@@ -1,7 +1,7 @@
 from src.services.book_service import BookService
 from src.services.member_service import MemberService
 from src.services.loan_service import LoanService
-from src.services.sync_manager import SyncManager
+from src.services.sync_data.sync_manager import SyncManager
 
 def get_book_service():
     try:

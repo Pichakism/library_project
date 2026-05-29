@@ -37,7 +37,7 @@ class SqliteStorage:
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS books (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                isbn TEXT UNIQUE NOT NULL,
+                book_isbn TEXT UNIQUE NOT NULL,
                 book_title TEXT NOT NULL,
                 author_name TEXT NOT NULL,
                 publication_year INTEGER,
@@ -51,6 +51,7 @@ class SqliteStorage:
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS members (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                member_nID TEXT UNIQUE NOT NULL,
                 first_name TEXT NOT NULL,
                 last_name TEXT NOT NULL,
                 phone_number TEXT UNIQUE,
@@ -60,13 +61,13 @@ class SqliteStorage:
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS loans (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                member_id INTEGER NOT NULL,
-                book_id INTEGER NOT NULL,
+                book_isbn TEXT NOT NULL,
+                member_nID TEXT NOT NULL,
                 loan_date DATE,
-                FOREIGN KEY(member_id)
-                    REFERENCES members(id),
-                FOREIGN KEY(book_id)
-                    REFERENCES books(id))"""
+                FOREIGN KEY(member_nID)
+                    REFERENCES members(member_nID),
+                FOREIGN KEY(book_isbn)
+                    REFERENCES books(book_isbn))"""
         )
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS app_metadata (

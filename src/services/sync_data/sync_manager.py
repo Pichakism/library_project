@@ -1,5 +1,5 @@
 from src.services.repository_registry import get_book_repository, get_member_repository, get_loan_repository
-from src.services.sync_queue import SyncQueue
+from src.services.sync_data.sync_queue import SyncQueue
 from src.utils.logger import write_sync_log
 from src.models.books import Book
 from src.models.members import Member
@@ -8,7 +8,8 @@ from src.models.status import (Book_Status, Physical_version, Digital_version, M
 
 def build_book_object(data):
     return Book(
-        data["isbn"],
+        # data["id"],
+        data["book_isbn"],
         data["book_title"],
         data["author_name"],
         data["publication_year"],
@@ -21,17 +22,18 @@ def build_book_object(data):
     )
 def build_member_object(data):
     return Member(
-        data["id"],
+        # data["id"],
+        data["member_nID"],
         data["first_name"],
         data["last_name"],
         data["phone_number"],
-        Member_Status(data["member_status"]),
+        Member_Status(data["status"]),
         data["join_date"]
     )
 def build_loan_object(data):
     return Loan(
-        data["book_id"],
-        data["member_id"],
+        data["book_isbn"],
+        data["member_nID"],
         data["loan_date"]
     )
 
@@ -58,14 +60,14 @@ class SyncManager:
             if operation == "insert_book":
                 if isinstance(data, dict):
                     data = build_book_object(data)
-                book_repo.insert_book(data, from_queue=from_queue)
+                book_repo.insert_book(data)
                 return {"db": db_name,
                         "status": "success",
                         "message": "ok"}
             if operation == "insert_member":
                 if isinstance(data, dict):
                     data = build_member_object(data)
-                member_repo.insert_member(data, from_queue=from_queue)
+                member_repo.insert_member(data)
                 return {"db": db_name,
                         "status": "success",
                         "message": "ok"}
