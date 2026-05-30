@@ -21,7 +21,7 @@ class BookService:
         return [
             {
                 "id": row[0],
-                "isbn": row[1],
+                "book_isbn": row[1],
                 "book_title": row[2],
                 "author_name": row[3],
                 "publication_year": row[4],

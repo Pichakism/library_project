@@ -80,15 +80,13 @@ class BookRepository:
         
         if column in numeric_columns:
             query = f"""
-                SELECT *
-                FROM books
+                DELETE FROM books
                 WHERE {column} = %s
             """
             params = (value,)
         else:
             query = f"""
-                SELECT *
-                FROM books
+                DELETE FROM books
                 WHERE {column} LIKE %s
             """
             params = (f"%{value}%",)

@@ -8,7 +8,7 @@ from src.services.service_factory import get_book_service
 
 # Mapping menu input numbers to actual database column names
 book_fields = {
-    "1": "isbn",
+    "1": "book_isbn",
     "2": "book_title",
     "3": "author_name",
     "4": "publication_year",
