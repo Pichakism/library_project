@@ -18,6 +18,5 @@ def get_member_service():
 def get_loan_service():
     try:
         return LoanService()
-
     except:
         return None

@@ -62,3 +62,34 @@ class SyncDBForMember:
             }
         )
 
+class SyncDBForLoan:
+    def __init__(self, sync_manager):
+        self.sync = sync_manager
+
+    def sync_insert(self, book):
+        self.sync.sync_all(
+            operation="insert_loan",
+            data=book
+        )
+
+    def sync_select(self, column, value):
+        pass
+
+    def sync_update(self, column, value, updates):
+        self.sync.sync_all(
+            operation="update_loan",
+            data={
+                "column": column,
+                "value": value,
+                "updates": updates
+            }
+        )
+
+    def sync_delete(self, column, value):
+        self.sync.sync_all(
+            operation="delete_loan",
+            data={
+                "column": column,
+                "value": value
+            }
+        )

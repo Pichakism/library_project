@@ -8,8 +8,8 @@ import datetime
 
 loan_fields = {
     "1": "id",
-    "2": "member_id",
-    "3": "book_id",
+    "2": "member_nID",
+    "3": "book_isbn",
     "4": "date"
 }
 
@@ -53,9 +53,9 @@ def add_loan():
         print("Invalid number!")
         return
 
-    book_id = book_data[user_book_input - 1]["id"]
-    member_id = member_data[user_member_input - 1]["id"]
-    loan = Loan(book_id, member_id, datetime.date.today())
+    book_isbn = book_data[user_book_input - 1]["book_isbn"]
+    member_nID = member_data[user_member_input - 1]["member_nID"]
+    loan = Loan(book_isbn, member_nID, datetime.date.today())
 
     service = get_loan_service()
     print(service.insert_loan(loan))
@@ -68,7 +68,7 @@ def user_input_for_search():
             "How do you want to search?\n"
             "\n1 - ID"
             "\n2 - Member ID"
-            "\n3 - Book ID"
+            "\n3 - Book ISBN"
             "\n4 - Date"
             "0 - Back...\n\n"
             "Enter: "))
@@ -131,7 +131,7 @@ def remove_loan():
             "\n-----Delete Book Menu-----\n"
             "\n1 - ID"
             "\n2 - Member ID"
-            "\n3 - Book ID"
+            "\n3 - Book ISBN"
             "\n4 - Date"
             "\n0 - Back"
             "\n\nWhich column should we search based on? : "))

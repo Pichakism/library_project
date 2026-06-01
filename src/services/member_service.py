@@ -20,6 +20,7 @@ class MemberService:
         rows = self.sqlite_repo.select_member(column, value)
         return [
             {
+                "id": row[0],
                 "member_nID": row[1],
                 "first_name": row[2],
                 "last_name": row[3],

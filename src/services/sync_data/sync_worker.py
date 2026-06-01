@@ -20,28 +20,29 @@ class SyncWorker:
     def process_queue(self):
         while self.is_running:
             queue = self.queue.load_queue()
-            remaining_queue = []
-            for operation in queue:
-                db_name = operation["database"]
-                op_type = operation["operation"]
-                data = operation["data"]
-                result = self.sync_manager.execute_on_database(
-                    db_name,
-                    op_type,
-                    data,
-                    from_queue=True
-                )
-                if result and result["status"] == "success":
-                    write_sync_log(
-                        f"[OK] Queue sync completed for {db_name} -> {result.get('message')}"
+            i = 0
+            while i < len(queue):
+                operation = queue[i]
+                try:
+                    db_name = operation["database"]
+                    op_type = operation["operation"]
+                    data = operation["data"]
+                    result = self.sync_manager.execute_on_database(
+                        db_name,
+                        op_type,
+                        data,
+                        from_queue=True
                     )
-                else:
-                    write_sync_log(
-                        f"Sync failed for {db_name} -> {result.get('message')}"
-                    )
-                    remaining_queue.append(operation)
-
-            self.queue.save_queue(remaining_queue)
+                    if result and result["status"] == "success":
+                        write_sync_log(f"[OK] Queue sync completed for \"{db_name}\"")
+                        queue.pop(i)
+                        self.queue.save_queue(queue)
+                    else:
+                        write_sync_log(f"[FAIL] Sync failed for \"{db_name}\"")
+                        i += 1
+                except Exception as e:
+                    write_sync_log(f"[ERROR] {str(e)}")
+                    i += 1
             time.sleep(self.retry_interval)
 
     def start(self):

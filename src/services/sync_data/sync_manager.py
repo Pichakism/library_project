@@ -8,7 +8,6 @@ from src.models.status import (Book_Status, Physical_version, Digital_version, M
 
 def build_book_object(data):
     return Book(
-        # data["id"],
         data["book_isbn"],
         data["book_title"],
         data["author_name"],
@@ -22,7 +21,6 @@ def build_book_object(data):
     )
 def build_member_object(data):
     return Member(
-        # data["id"],
         data["member_nID"],
         data["first_name"],
         data["last_name"],
@@ -55,6 +53,7 @@ class SyncManager:
     def execute_on_database(self, db_name, operation, data, from_queue=False):
         book_repo = get_book_repository(db_name)
         member_repo = get_member_repository(db_name)
+        loan_repo = get_loan_repository(db_name)
         try:
 
             if operation == "insert_book":
@@ -71,21 +70,35 @@ class SyncManager:
                 return {"db": db_name,
                         "status": "success",
                         "message": "ok"}
+            if operation == "insert_loan":
+                if isinstance(data, dict):
+                    data = build_loan_object(data)
+                loan_repo.insert_loan(data)
+                return {"db": db_name,
+                        "status": "success",
+                        "message": "ok"}
             
-            elif operation == "select_book":
-                column = data["column"]
-                value = data["value"]
-                rows = book_repo.select_book(column, value)
-                return {"db": db_name,
-                        "status": "success",
-                        "data": rows}
-            elif operation == "select_member":
-                column = data["column"]
-                value = data["value"]
-                rows = member_repo.select_member(column, value)
-                return {"db": db_name,
-                        "status": "success",
-                        "data": rows}
+            # elif operation == "select_book":
+            #     column = data["column"]
+            #     value = data["value"]
+            #     rows = book_repo.select_book(column, value)
+            #     return {"db": db_name,
+            #             "status": "success",
+            #             "data": rows}
+            # elif operation == "select_member":
+            #     column = data["column"]
+            #     value = data["value"]
+            #     rows = member_repo.select_member(column, value)
+            #     return {"db": db_name,
+            #             "status": "success",
+            #             "data": rows}
+            # elif operation == "select_loan":
+            #     column = data["column"]
+            #     value = data["value"]
+            #     rows = loan_repo.select_loan(column, value)
+            #     return {"db": db_name,
+            #             "status": "success",
+            #             "data": rows}
             
             elif operation == "delete_book":
                 column = data["column"]
@@ -98,6 +111,13 @@ class SyncManager:
                 column = data["column"]
                 value = data["value"]
                 member_repo.delete_member(column, value)
+                return {"db": db_name,
+                        "status": "success",
+                        "message": "deleted"}
+            elif operation == "delete_loan":
+                column = data["column"]
+                value = data["value"]
+                loan_repo.delete_loan(column, value)
                 return {"db": db_name,
                         "status": "success",
                         "message": "deleted"}
@@ -118,6 +138,14 @@ class SyncManager:
                 return {"db": db_name,
                         "status": "success",
                         "message": "updated"}
+            elif operation == "update_loan":
+                column = data["column"]
+                value = data["value"]
+                updates = data["updates"]
+                loan_repo.update_loan(column, value, updates)
+                return {"db": db_name,
+                        "status": "success",
+                        "message": "updated"}
 
         except Exception as e:
             if not operation.startswith("select_") and not from_queue:
@@ -134,7 +162,7 @@ class SyncManager:
             results.append(result)
 
             if result["status"] == "success":
-                write_sync_log(f"[SYNC OK] {db_name}")
+                write_sync_log(f"[SYNC OK] for \"{db_name}\"")
             else:
                 write_sync_log(f"[SYNC FAIL] {db_name} -> {result['message']}")
         return results
