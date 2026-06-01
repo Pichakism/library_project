@@ -25,7 +25,9 @@ class SqlServerStorage:
         with self.connect() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, params)
+                affected = cursor.rowcount
             connection.commit()
+        return affected
 
     def fetch_one(self, query, params=()):
         with self.connect() as connection:

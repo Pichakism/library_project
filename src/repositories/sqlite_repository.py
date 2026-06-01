@@ -235,7 +235,8 @@ class LoanRepository:
             WHERE {column} = ?
         """
         try:
-            results = self.storage.fetch_all(query, (value,))
+            results = self.storage.execute_row(query, (value,))
+            print("ROWCOUNT =", results)
             return results
         except Exception as e:
             # print("SQL ERROR:", e)

@@ -31,7 +31,7 @@ class MemberService:
             for row in rows
         ]
 
-    def update_book(self, column, value, updates):
+    def update_member(self, column, value, updates):
         self.sqlite_repo.update_member(column, value, updates)
         threading.Thread(
             target=SyncDBForMember(self.sync_manager).sync_update,

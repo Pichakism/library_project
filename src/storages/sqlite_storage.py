@@ -13,7 +13,10 @@ class SqliteStorage:
         cursor = connection.cursor()
         cursor.execute(query, params)
         connection.commit()
+        affected = cursor.rowcount
+        cursor.close()
         connection.close()
+        return affected
 
     def fetch_one(self, query, params):
         connection = self.connect()

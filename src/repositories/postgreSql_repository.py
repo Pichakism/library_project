@@ -49,7 +49,7 @@ class BookRepository:
                 count) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         try:
-            self.storage.execute(
+            affected = self.storage.execute(
                 query,
                 (
                     book.book_isbn,
@@ -64,7 +64,9 @@ class BookRepository:
                     book.count
                 )
             )
-            return "\nBook added successfully...\n"
+            if affected == 0:
+                raise Exception("[MYSQL] BOOK INSERT FAILED")
+            return affected
         except Exception as e:
             # print("SQL ERROR:", e)
             raise
@@ -91,8 +93,10 @@ class BookRepository:
             """
             params = (f"%{value}%",)
         try:
-            self.storage.execute(query, params)
-            return "\nBook deleted successfully...\n"
+            affected = self.storage.execute(query, params)
+            if affected == 0:
+                raise Exception("[MYSQL] BOOK DELETE FAILED")
+            return affected
         except Exception as e:
             # print("SQL ERROR:", e)
             raise
@@ -106,8 +110,10 @@ class BookRepository:
         """
         params = (tuple(updates.values()) + (value,))
         try:
-            self.storage.execute(query, params)
-            return "\nBook updated successfully...\n"
+            affected = self.storage.execute(query, params)
+            if affected == 0:
+                raise Exception("[MYSQL] BOOK UPDATE FAILED")
+            return affected 
         except Exception as e:
             # print("SQL ERROR:", e)
             raise
@@ -155,7 +161,7 @@ class MemberRepository:
                 join_date) VALUES (%s, %s, %s, %s, %s, %s)
         """
         try:
-            self.storage.execute(
+            affected = self.storage.execute(
                 query,
                 (
                     member.member_nID,
@@ -166,7 +172,9 @@ class MemberRepository:
                     member.join_date
                 )
             )
-            return "\nMember added successfully...\n"
+            if affected == 0:
+                raise Exception("[MYSQL] MEMBER INSERT FAILED")
+            return affected
         except Exception as e:
             # print("SQL ERROR:", e)
             raise
@@ -183,8 +191,10 @@ class MemberRepository:
         """
 
         try:
-            self.storage.execute(query, (value,))
-            return "\nMember deleted successfully...\n"
+            affected = self.storage.execute(query, (value,))
+            if affected == 0:
+                raise Exception("[MYSQL] MEMBER DELETE FAILED")
+            return affected
         except Exception as e:
             # print("SQL ERROR:", e)
             raise
@@ -198,8 +208,10 @@ class MemberRepository:
         """
         params = (tuple(updates.values()) + (value,))
         try:
-            self.storage.execute(query, params)
-            return "\nMember updated successfully...\n"
+            affected = self.storage.execute(query, params)
+            if affected == 0:
+                raise Exception("[MYSQL] MEMBER UPDATE FAILED")
+            return affected
         except Exception as e:
             # print("SQL ERROR:", e)
             raise
@@ -235,7 +247,7 @@ class LoanRepository:
             loan_date) VALUES (%s, %s, %s)
         """
         try:
-            self.storage.execute(
+            affected = self.storage.execute(
                 query,
                 (
                     loan.book_isbn,
@@ -243,7 +255,9 @@ class LoanRepository:
                     loan.loan_date
                 )
             )
-            return "\nloan added successfully...\n"
+            if affected == 0:
+                raise Exception("[MYSQL] LOAN INSERT FAILED")
+            return affected
         except Exception as e:
             # print("SQL ERROR:", e)
             raise
@@ -258,13 +272,14 @@ class LoanRepository:
             raise ValueError("Invalide Value...!")
         
         query = f"""
-            DELETE
-            FROM loans
-            WHERE {column} = ?
+            DELETE FROM loans
+            WHERE {column} = %s
         """
         try:
-            results = self.storage.execute(query, (value,))
-            return results
+            affected = self.storage.execute(query, (value,))
+            if affected == 0:
+                raise Exception("[MYSQL] LOAN DELETE FAILED")
+            return affected
         except Exception as e:
             # print("SQL ERROR:", e)
             raise

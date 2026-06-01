@@ -11,7 +11,7 @@ def write_sync_log(message):
         file.write(f"[{datetime.now()}] {message}\n")
 
 class SyncWorker:
-    def __init__(self, sync_manager, retry_interval=10):
+    def __init__(self, sync_manager, retry_interval=1):
         self.retry_interval = retry_interval
         self.queue = SyncQueue()
         self.sync_manager = sync_manager
@@ -38,7 +38,7 @@ class SyncWorker:
                         queue.pop(i)
                         self.queue.save_queue(queue)
                     else:
-                        write_sync_log(f"[FAIL] Sync failed for \"{db_name}\"")
+                        write_sync_log(f'[FAIL] Sync failed for "{db_name}" -> {result["message"]}')
                         i += 1
                 except Exception as e:
                     write_sync_log(f"[ERROR] {str(e)}")

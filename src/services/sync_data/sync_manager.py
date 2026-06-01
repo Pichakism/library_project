@@ -55,69 +55,58 @@ class SyncManager:
         member_repo = get_member_repository(db_name)
         loan_repo = get_loan_repository(db_name)
         try:
-
             if operation == "insert_book":
                 if isinstance(data, dict):
                     data = build_book_object(data)
-                book_repo.insert_book(data)
+                result = book_repo.insert_book(data)
+                if not result:
+                    raise Exception("insert_book failed")
                 return {"db": db_name,
                         "status": "success",
                         "message": "ok"}
             if operation == "insert_member":
                 if isinstance(data, dict):
                     data = build_member_object(data)
-                member_repo.insert_member(data)
+                result = member_repo.insert_member(data)
+                if not result:
+                    raise Exception("insert_member failed")
                 return {"db": db_name,
                         "status": "success",
                         "message": "ok"}
             if operation == "insert_loan":
                 if isinstance(data, dict):
                     data = build_loan_object(data)
-                loan_repo.insert_loan(data)
+                result = loan_repo.insert_loan(data)
+                if not result:
+                    raise Exception("insert_loan failed")
                 return {"db": db_name,
                         "status": "success",
                         "message": "ok"}
             
-            # elif operation == "select_book":
-            #     column = data["column"]
-            #     value = data["value"]
-            #     rows = book_repo.select_book(column, value)
-            #     return {"db": db_name,
-            #             "status": "success",
-            #             "data": rows}
-            # elif operation == "select_member":
-            #     column = data["column"]
-            #     value = data["value"]
-            #     rows = member_repo.select_member(column, value)
-            #     return {"db": db_name,
-            #             "status": "success",
-            #             "data": rows}
-            # elif operation == "select_loan":
-            #     column = data["column"]
-            #     value = data["value"]
-            #     rows = loan_repo.select_loan(column, value)
-            #     return {"db": db_name,
-            #             "status": "success",
-            #             "data": rows}
-            
             elif operation == "delete_book":
                 column = data["column"]
                 value = data["value"]
-                book_repo.delete_book(column, value)
+                result = book_repo.delete_book(column, value)
+                if not result:
+                    raise Exception("delete_book failed")
                 return {"db": db_name,
                         "status": "success",
                         "message": "deleted"}
             elif operation == "delete_member":
                 column = data["column"]
                 value = data["value"]
-                member_repo.delete_member(column, value)
+                result = member_repo.delete_member(column, value)
+                if not result:
+                    raise Exception("delete_member failed")
                 return {"db": db_name,
                         "status": "success",
                         "message": "deleted"}
             elif operation == "delete_loan":
                 column = data["column"]
                 value = data["value"]
-                loan_repo.delete_loan(column, value)
+                result = loan_repo.delete_loan(column, value)
+                if not result:
+                    raise Exception("delete_loan failed")
                 return {"db": db_name,
                         "status": "success",
                         "message": "deleted"}
@@ -126,7 +115,9 @@ class SyncManager:
                 column = data["column"]
                 value = data["value"]
                 updates = data["updates"]
-                book_repo.update_book(column, value, updates)
+                result = book_repo.update_book(column, value, updates)
+                if not result:
+                    raise Exception("update_book failed")
                 return {"db": db_name,
                         "status": "success",
                         "message": "updated"}
@@ -134,7 +125,9 @@ class SyncManager:
                 column = data["column"]
                 value = data["value"]
                 updates = data["updates"]
-                member_repo.update_member(column, value, updates)
+                result = member_repo.update_member(column, value, updates)
+                if not result:
+                    raise Exception("update_member failed")
                 return {"db": db_name,
                         "status": "success",
                         "message": "updated"}
@@ -142,7 +135,9 @@ class SyncManager:
                 column = data["column"]
                 value = data["value"]
                 updates = data["updates"]
-                loan_repo.update_loan(column, value, updates)
+                result = loan_repo.update_loan(column, value, updates)
+                if not result:
+                    raise Exception("update_loan failed")
                 return {"db": db_name,
                         "status": "success",
                         "message": "updated"}
@@ -150,9 +145,11 @@ class SyncManager:
         except Exception as e:
             if not operation.startswith("select_") and not from_queue:
                 self.queue.add_operation(db_name, operation, serialize_data(data))
-            return {"db": db_name,
-                    "status": "failed",
-                    "message": str(e)}
+            return {
+                "db": db_name,
+                "status": "failed",
+                "message": str(e)
+            }
         
 
     def sync_all(self, operation, data):
