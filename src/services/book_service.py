@@ -1,6 +1,6 @@
 from src.repositories.sqlite_repository import BookRepository
 from src.services.sync_data.sync_manager import SyncManager
-from src.services.sync_data.sync_serrvice import SyncDBForBook
+from src.services.sync_data.sync_service import SyncDBForBook
 import threading
 
 class BookService:

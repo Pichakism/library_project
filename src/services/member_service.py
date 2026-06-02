@@ -1,6 +1,6 @@
 from src.repositories.sqlite_repository import MemberRepository
 from src.services.sync_data.sync_manager import SyncManager
-from src.services.sync_data.sync_serrvice import SyncDBForMember
+from src.services.sync_data.sync_service import SyncDBForMember
 import threading
 
 class MemberService:

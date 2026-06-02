@@ -1,6 +1,6 @@
 from src.repositories.sqlite_repository import LoanRepository
 from src.services.sync_data.sync_manager import SyncManager
-from src.services.sync_data.sync_serrvice import SyncDBForLoan
+from src.services.sync_data.sync_service import SyncDBForLoan
 import threading
 class LoanService:
     def __init__(self):

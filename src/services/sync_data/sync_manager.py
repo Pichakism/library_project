@@ -36,15 +36,15 @@ def build_loan_object(data):
     )
 
 def serialize_data(obj):
-        if hasattr(obj, "__dict__"):
-            data = obj.__dict__.copy()
-            for k, v in data.items():
-                if hasattr(v, "value"):
-                    data[k] = v.value
-                else:
-                    data[k] = str(v)
-            return data
-        return obj
+    if hasattr(obj, "__dict__"):
+        data = obj.__dict__.copy()
+        for k, v in data.items():
+            if hasattr(v, "value"):
+                data[k] = v.value
+            else:
+                data[k] = str(v)
+        return data
+    return obj
 
 class SyncManager:
     def __init__(self):
