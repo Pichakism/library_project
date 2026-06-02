@@ -1,6 +1,6 @@
 from src.services.service_factory import get_loan_service, get_book_service, get_member_service
-from src.controler.book_controler import user_input_for_book_search, book_fields
-from src.controler.member_controler import user_input_for_member_search, member_fields
+from src.controller.book_controller import user_input_for_book_search, book_fields
+from src.controller.member_controller import user_input_for_member_search, member_fields
 from src.models.loan import Loan
 from src.services.gtj import gregorian_to_jalali
 import datetime
