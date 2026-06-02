@@ -50,22 +50,32 @@ The system uses **SQLite** as the primary database and automatically synchronize
 
 ---
 
-### 🏗️ System Architecture
+## 🏗️ System Architecture
 
-                 User Interface
-                        │
-                        ▼
-                 Service Layer
-                        │
-                        ▼
-                SQLite Database
-                        │
-                        ▼
-                 Sync Manager
-                        │
-          ┌─────────────┼─────────────┐
-          ▼             ▼             ▼
-       MySQL      PostgreSQL      SQL Server
+     main.py
+        │
+        ▼
+    Controllers
+        │
+        ▼
+     Services
+        │
+        ├────────────────────────► Sync Manager
+        │                               │
+        ▼                               ▼
+  SQLite Repository          MySQL / PostgreSQL / SQL Server
+        │
+        ▼
+   SQLite Database
+
+  Failed Sync Operations
+          │
+          ▼
+      Sync Queue
+          ▲
+          │
+      Sync Worker
+
 Architecture Overview
 
 The system follows a layered architecture where SQLite acts as the primary data source. All operations are first executed on SQLite and then synchronized with available external databases through the synchronization service.
