@@ -1,6 +1,5 @@
+mysql-connector-python
+psycopg2-binary
+pyodbc
 pandas
 python-dotenv
-mysql-connector-python
-
-
-pip install -r requirements.txt
