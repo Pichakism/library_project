@@ -53,23 +53,23 @@ The system uses **SQLite** as the primary database and automatically synchronize
 ## 🏗️ System Architecture
 
 ```text
-     main.py
-        │
-        ▼
-    Controllers
-        │
-        ▼
-     Services
-        │
-        ├──────────────────────────► Sync Manager
-        │                                 │
-        ▼                       ───────────────────────
- SQLite Repository              │         │           │
-        │                       ▼         ▼           ▼
-        ▼                     MySQL / PostgreSQL / SQL Server
-  SQLite Database        
+       main.py
+          │
+          ▼
+      Controllers
+          │
+          ▼
+       Services
+          │
+          ├──────────────────────────► Sync Manager
+          │                                 │
+          ▼                       ───────────────────────
+   SQLite Repository              │         │           │
+          │                       ▼         ▼           ▼
+          ▼                     MySQL / PostgreSQL / SQL Server
+    SQLite Database        
 
-  Failed Sync Operations
+ Failed Sync Operations
           │
           ▼
       Sync Queue
