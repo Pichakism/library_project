@@ -50,7 +50,8 @@ The system uses **SQLite** as the primary database and automatically synchronize
 
 ---
 
-🏗️ System Architecture
+### 🏗️ System Architecture
+
                  User Interface
                         │
                         ▼
