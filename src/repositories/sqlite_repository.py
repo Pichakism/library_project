@@ -8,16 +8,13 @@ class BookRepository:
         allowed_column = ["id", "book_isbn", "book_title", "author_name",
                           "publication_year", "page_count", "genre",
                           "book_status", "physical_version", "digital_version", "count"]
-
         if column not in allowed_column:
             raise ValueError("Invalide Value...!")
-        
         query = f"""
             SELECT *
             FROM books
             WHERE {column} LIKE ?
         """
-
         try:
             results = self.storage.fetch_all(query, (f"%{value}%",))
             return results
@@ -39,7 +36,6 @@ class BookRepository:
                 digital_version,
                 count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
-
         try:
             self.storage.execute_row(
                 query,
@@ -80,10 +76,8 @@ class BookRepository:
         allowed_column = ["id", "book_isbn", "book_title", "author_name",
                           "publication_year", "page_count", "genre",
                           "book_status", "physical_version", "digital_version", "count"]
-
         if column not in allowed_column:
             raise ValueError("Invalide Value...!")
-        
         query = f"""
             DELETE FROM books
             WHERE {column} = ?
@@ -101,10 +95,8 @@ class MemberRepository:
 
     def select_member(self, column, value):
         allowed_column = ["id", "member_nID", "first_name", "last_name", "phone_number", "status", "join_date"]
-
         if column not in allowed_column:
             raise ValueError("Invalide Value...!")
-        
         query = f"""
             SELECT *
             FROM members
@@ -161,10 +153,8 @@ class MemberRepository:
 
     def delete_member(self, column, value):
         allowed_column = ["id", "member_nID", "first_name", "last_name", "phone_number", "status", "join_date"]
-
         if column not in allowed_column:
             raise ValueError("Invalide Value...!")
-        
         query = f"""
             DELETE FROM members
             WHERE {column} = ?
@@ -176,17 +166,14 @@ class MemberRepository:
             # print("SQL ERROR:", e)
             raise
 
-    # TODO :                                                                                    
 class LoanRepository:
     def __init__(self):
         self.storage = SqliteStorage()
 
     def select_loan(self, column, value):
         allowed_column = ["id", "book_isbn", "member_nID", "loan_date"]
-
         if column not in allowed_column:
             raise ValueError("Invalide Value...!")
-        
         query = f"""
             SELECT *
             FROM loans
@@ -220,15 +207,25 @@ class LoanRepository:
             # print("SQL ERROR:", e)
             raise
     
-    def update_loan(self):
-        ...
+    def update_loan(self, column, value, updates):
+        set_clause = ", ".join(f"{field} = %s" for field in updates)
+        query = f"""
+            UPDATE loans
+            SET {set_clause}
+            WHERE {column} = ?
+        """
+        params = (tuple(updates.values()) + (value,))
+        try:
+            self.storage.execute_row(query, params)
+            return "\nMember updated successfully...\n"
+        except Exception as e:
+            # print("SQL ERROR:", e)
+            raise
 
     def delete_loan(self, column, value):
         allowed_column = ["id", "book_isbn", "member_nID", "loan_date"]
-
         if column not in allowed_column:
             raise ValueError("Invalide Value...!")
-        
         query = f"""
             DELETE
             FROM loans

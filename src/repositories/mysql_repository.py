@@ -67,10 +67,8 @@ class BookRepository:
         allowed_column = ["id", "book_isbn", "book_title", "author_name",
                           "publication_year", "page_count", "genre",
                           "book_status", "physical_version", "digital_version", "count"]
-
         if column not in allowed_column:
             raise ValueError("Invalide Value...")
-        
         query = f"""
             DELETE FROM books
             WHERE {column} = %s
@@ -86,14 +84,12 @@ class BookRepository:
 
     def update_book(self, column, value, updates):
         set_clause = ", ".join(f"{field} = %s" for field in updates)
-
         query = f"""
             UPDATE books
             SET {set_clause}
             WHERE {column} = %s
         """
         params = (tuple(updates.values()) + (value,))
-
         try:
             affected = self.storage.execute(query, params)
             if affected == 0:
@@ -109,16 +105,13 @@ class MemberRepository:
 
     def select_member(self, column, value):
         allowed_column = ["id", "member_nID", "first_name", "last_name", "phone_number", "status", "join_date"]
-
         if column not in allowed_column:
             raise ValueError("Invalide value...!")
-        
         query = f"""
             SELECT *
             FROM members
             WHERE {column} LIKE %s
         """
-            
         try:
             result = self.storage.fetch_all(query, (f"%{value}%",))
             return result
@@ -157,15 +150,12 @@ class MemberRepository:
 
     def delete_member(self, column, value):
         allowed_column = ["id", "member_nID", "first_name", "last_name", "phone_number", "status", "join_date"]
-
         if column not in allowed_column:
             raise ValueError("Invalide value...!")
-        
         query = f"""
             DELETE FROM members
             WHERE {column} = %s
         """
-
         try:
             affected = self.storage.execute(query, (value,))
             if affected == 0:
@@ -177,14 +167,12 @@ class MemberRepository:
 
     def update_member(self, column, value, updates):
         set_clause = ", ".join(f"{field} = %s" for field in updates)
-
         query = f"""
             UPDATE members
             SET {set_clause}
             WHERE {column} = %s
         """
         params = (tuple(updates.values()) + (value,))
-
         try:
             affected = self.storage.execute(query, params)
             if affected == 0:
@@ -194,23 +182,19 @@ class MemberRepository:
             # print("SQL ERROR:", e)
             raise
         
-    # TODO :                                                                                    
 class LoanRepository:
     def __init__(self):
         self.storage = MySqlStorage()
 
     def select_loan(self, column, value):
         allowed_column = ["id", "book_isbn", "member_nID", "loan_date"]
-
         if column not in allowed_column:
             raise ValueError("Invalide Value...!")
-        
         query = f"""
             SELECT *
             FROM loans
             WHERE {column} LIKE ?
         """
-
         try:
             results = self.storage.fetch_all(query, (f"%{value}%",))
             return results
@@ -225,7 +209,6 @@ class LoanRepository:
             member_nID,
             loan_date) VALUES (%s, %s, %s)
         """
-
         try:
             affected = self.storage.execute(
                 query,
@@ -242,21 +225,32 @@ class LoanRepository:
             # print("SQL ERROR:", e)
             raise
     
-    def update_loan(self):
-        ...
+    def update_loan(self, column, value, updates):
+        set_clause = ", ".join(f"{field} = %s" for field in updates)
+        query = f"""
+            UPDATE loans
+            SET {set_clause}
+            WHERE {column} = %s
+        """
+        params = (tuple(updates.values()) + (value,))
+        try:
+            affected = self.storage.execute(query, params)
+            if affected == 0:
+                raise Exception("[MYSQL] loans UPDATE FAILED")
+            return affected
+        except Exception as e:
+            # print("SQL ERROR:", e)
+            raise
 
     def delete_loan(self, column, value):
         allowed_column = ["id", "book_isbn", "member_nID", "loan_date"]
-
         if column not in allowed_column:
             raise ValueError("Invalide Value...!")
-        
         query = f"""
             DELETE
             FROM loans
             WHERE {column} = %s
         """
-
         try:
             affected = self.storage.execute(query, (value,))
             if affected == 0:

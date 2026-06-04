@@ -1,15 +1,13 @@
-from src.storages.sqlServer_storage import SqlServerStorage
-
-
+from src.storages.oracle_storage import OracleStorage
+from src.services.sync_data.sync_manager import SyncManager
 class BookRepository:
     def __init__(self):
-        self.storage = SqlServerStorage()
+        self.storage = OracleStorage()
 
     def select_book(self, column, value):
         allowed_column = ["id", "book_isbn", "book_title", "author_name",
-                          "publication_year", "page_count", "genre",
-                          "book_status", "physical_version",
-                          "digital_version", "count"]
+                          "publication_year", "page_count", "genre", "book_status",
+                          "physical_version", "digital_version", "count"]
         numeric_columns = ["id", "publication_year", "page_count", "count"]
         if column not in allowed_column:
             raise ValueError("Invalid Value...")
@@ -17,21 +15,20 @@ class BookRepository:
             query = f"""
                 SELECT *
                 FROM books
-                WHERE {column} = ?
+                WHERE {column} = :1
             """
             params = (value,)
         else:
             query = f"""
                 SELECT *
                 FROM books
-                WHERE {column} LIKE ?
+                WHERE {column} LIKE :1
             """
             params = (f"%{value}%",)
         try:
             results = self.storage.fetch_all(query, params)
             return results
         except Exception as e:
-            # print("SQL ERROR:", e)
             raise
 
     def insert_book(self, book):
@@ -47,7 +44,7 @@ class BookRepository:
                 physical_version,
                 digital_version,
                 count
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (:1,:2,:3,:4,:5,:6,:7,:8,:9,:10)
         """
         try:
             affected = self.storage.execute(
@@ -66,62 +63,58 @@ class BookRepository:
                 )
             )
             if affected == 0:
-                raise Exception("[SQL SERVER] BOOK INSERT FAILED")
+                raise Exception("[ORACLE] BOOK INSERT FAILED")
             return affected
         except Exception as e:
-            # print("SQL ERROR:", e)
             raise
 
     def delete_book(self, column, value):
         allowed_column = ["id", "book_isbn", "book_title", "author_name",
-                          "publication_year", "page_count", "genre",
-                          "book_status", "physical_version",
-                          "digital_version", "count"]
+                          "publication_year", "page_count", "genre", "book_status",
+                          "physical_version", "digital_version", "count"]
         numeric_columns = ["id", "publication_year", "page_count", "count"]
         if column not in allowed_column:
             raise ValueError("Invalid Value...")
         if column in numeric_columns:
             query = f"""
                 DELETE FROM books
-                WHERE {column} = ?
+                WHERE {column} = :1
             """
             params = (value,)
         else:
             query = f"""
                 DELETE FROM books
-                WHERE {column} LIKE ?
+                WHERE {column} LIKE :1
             """
             params = (f"%{value}%",)
-
         try:
             affected = self.storage.execute(query, params)
             if affected == 0:
-                raise Exception("[SQL SERVER] BOOK DELETE FAILED")
+                raise Exception("[ORACLE] BOOK DELETE FAILED")
             return affected
         except Exception as e:
-            # print("SQL ERROR:", e)
             raise
 
     def update_book(self, column, value, updates):
-        set_clause = ", ".join(f"{field} = ?" for field in updates)
+        set_clause = ", ".join(f"{field} = :{i}" for i, field in enumerate(updates.keys(), start=1))
+        where_placeholder = len(updates) + 1
         query = f"""
             UPDATE books
             SET {set_clause}
-            WHERE {column} = ?
+            WHERE {column} = :{where_placeholder}
         """
         params = tuple(updates.values()) + (value,)
         try:
             affected = self.storage.execute(query, params)
             if affected == 0:
-                raise Exception("[SQL SERVER] BOOK UPDATE FAILED")
-            return affected 
+                raise Exception("[ORACLE] BOOK UPDATE FAILED")
+            return affected
         except Exception as e:
-            # print("SQL ERROR:", e)
             raise
-        
+
 class MemberRepository:
     def __init__(self):
-        self.storage = SqlServerStorage()
+        self.storage = OracleStorage()
 
     def select_member(self, column, value):
         allowed_column = ["id", "member_nID", "first_name", "last_name",
@@ -132,21 +125,20 @@ class MemberRepository:
             query = f"""
                 SELECT *
                 FROM members
-                WHERE {column} = ?
+                WHERE {column} = :1
             """
             params = (value,)
         else:
             query = f"""
                 SELECT *
                 FROM members
-                WHERE {column} LIKE ?
+                WHERE {column} LIKE :1
             """
             params = (f"%{value}%",)
         try:
             result = self.storage.fetch_all(query, params)
             return result
-        except Exception as e:
-            # print("SQL ERROR:", e)
+        except Exception:
             raise
 
     def insert_member(self, member):
@@ -158,7 +150,7 @@ class MemberRepository:
                 phone_number,
                 status,
                 join_date
-            ) VALUES (?, ?, ?, ?, ?, ?)
+            ) VALUES (:1, :2, :3, :4, :5, :6)
         """
         try:
             affected = self.storage.execute(
@@ -173,10 +165,9 @@ class MemberRepository:
                 )
             )
             if affected == 0:
-                raise Exception("[SQL SERVER] MEMBER INSERT FAILED")
+                raise Exception("[ORACLE] MEMBER INSERT FAILED")
             return affected
-        except Exception as e:
-            # print("SQL ERROR:", e)
+        except Exception:
             raise
 
     def delete_member(self, column, value):
@@ -184,39 +175,37 @@ class MemberRepository:
                           "phone_number", "status", "date"]
         if column not in allowed_column:
             raise ValueError("Invalid value...!")
-
         query = f"""
             DELETE FROM members
-            WHERE {column} = ?
+            WHERE {column} = :1
         """
         try:
             affected = self.storage.execute(query, (value,))
             if affected == 0:
-                raise Exception("[SQL SERVER] MEMBER DELETE FAILED")
+                raise Exception("[ORACLE] MEMBER DELETE FAILED")
             return affected
-        except Exception as e:
-            # print("SQL ERROR:", e)
+        except Exception:
             raise
+
     def update_member(self, column, value, updates):
-        set_clause = ", ".join(f"{field} = ?" for field in updates)
+        set_clause = ", ".join(f"{field} = :{i+1}" for i, field in enumerate(updates))
         query = f"""
             UPDATE members
             SET {set_clause}
-            WHERE {column} = ?
+            WHERE {column} = :{len(updates)+1}
         """
         params = tuple(updates.values()) + (value,)
         try:
             affected = self.storage.execute(query, params)
             if affected == 0:
-                raise Exception("[SQL SERVER] MEMBER UPDATE FAILED")
+                raise Exception("[ORACLE] MEMBER UPDATE FAILED")
             return affected
-        except Exception as e:
-            # print("SQL ERROR:", e)
+        except Exception:
             raise
-
+        
 class LoanRepository:
     def __init__(self):
-        self.storage = SqlServerStorage()
+        self.storage = OracleStorage()
 
     def select_loan(self, column, value):
         allowed_column = ["id", "book_isbn", "member_nID", "loan_date"]
@@ -225,13 +214,12 @@ class LoanRepository:
         query = f"""
             SELECT *
             FROM loans
-            WHERE {column} LIKE ?
+            WHERE {column} LIKE :1
         """
         try:
             results = self.storage.fetch_all(query, (f"%{value}%",))
             return results
-        except Exception as e:
-            # print("SQL ERROR:", e)
+        except Exception:
             raise
 
     def insert_loan(self, loan):
@@ -240,7 +228,7 @@ class LoanRepository:
                 book_isbn,
                 member_nID,
                 loan_date
-            ) VALUES (?, ?, ?)
+            ) VALUES (:1, :2, :3)
         """
         try:
             affected = self.storage.execute(
@@ -252,43 +240,39 @@ class LoanRepository:
                 )
             )
             if affected == 0:
-                raise Exception("[SQL SERVER] LOAN INSERT FAILED")
+                raise Exception("[ORACLE] LOAN INSERT FAILED")
             return affected
-        except Exception as e:
-            # print("SQL ERROR:", e)
+        except Exception:
             raise
 
     def update_loan(self, column, value, updates):
-        set_clause = ", ".join(f"{field} = %s" for field in updates)
+        set_clause = ", ".join(f"{field} = :{i+1}" for i, field in enumerate(updates))
         query = f"""
             UPDATE loans
             SET {set_clause}
-            WHERE {column} = ?
+            WHERE {column} = :{len(updates)+1}
         """
-        params = (tuple(updates.values()) + (value,))
+        params = tuple(updates.values()) + (value,)
         try:
             affected = self.storage.execute(query, params)
             if affected == 0:
-                raise Exception("[SQL SERVER] MEMBER UPDATE FAILED")
+                raise Exception("[ORACLE] LOAN UPDATE FAILED")
             return affected
-        except Exception as e:
-            # print("SQL ERROR:", e)
+        except Exception:
             raise
 
     def delete_loan(self, column, value):
         allowed_column = ["id", "book_isbn", "member_nID", "loan_date"]
         if column not in allowed_column:
             raise ValueError("Invalid Value...!")
-
         query = f"""
             DELETE FROM loans
-            WHERE {column} = ?
+            WHERE {column} = :1
         """
         try:
             affected = self.storage.execute(query, (value,))
             if affected == 0:
-                raise Exception("[SQL SERVER] LOAN DELETE FAILED")
+                raise Exception("[ORACLE] LOAN DELETE FAILED")
             return affected
-        except Exception as e:
-            # print("SQL ERROR:", e)
+        except Exception:
             raise

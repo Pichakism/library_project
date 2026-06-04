@@ -2,7 +2,7 @@
 
 A Python-based Library Management System with multi-database synchronization support.
 
-The system uses **SQLite** as the primary database and automatically synchronizes data with **MySQL**, **PostgreSQL**, and **SQL Server**. Failed synchronization operations are stored locally and retried automatically to ensure data consistency across all available databases.
+The system uses **SQLite** as the primary database and automatically synchronizes data with **MySQL**, **PostgreSQL**, **SQL Server** and **Oracle DB**. Failed synchronization operations are stored locally and retried automatically to ensure data consistency across all available databases.
 
 ---
 
@@ -12,21 +12,22 @@ The system uses **SQLite** as the primary database and automatically synchronize
 
 * Add books
 * Search books
-* Update book information
 * Delete books
+* Update book information
 
 ### 👤 Member Management
 
 * Add members
 * Search members
-* Update member information
 * Delete members
+* Update member information
 
 ### 🔄 Loan Management
 
 * Register loans
 * Search loans
 * Delete loans
+* Update loan information
 
 ### 🗄️ Multi-Database Support
 
@@ -34,6 +35,7 @@ The system uses **SQLite** as the primary database and automatically synchronize
 * MySQL
 * PostgreSQL
 * SQL Server
+* Oracle DB
 
 ### 🔁 Automatic Synchronization
 
@@ -61,12 +63,12 @@ The system uses **SQLite** as the primary database and automatically synchronize
           ▼
        Services
           │
-          ├──────────────────────────► Sync Manager
-          │                                 │
-          ▼                       ───────────────────────
-   SQLite Repository              │         │           │
-          │                       ▼         ▼           ▼
-          ▼                     MySQL / PostgreSQL / SQL Server
+          ├────────────────────────────────► Sync Manager
+          │                                       │
+          ▼                       ────────────────────────────────────
+   SQLite Repository              │         │           │            │
+          │                       ▼         ▼           ▼            ▼
+          ▼                     MySQL / PostgreSQL / SQL Server / Oracle DB
     SQLite Database        
 
  Failed Sync Operations
@@ -127,6 +129,15 @@ SqlSERVER_DB_PASSWORD=password
 SqlSERVER_DB_NAME=DB_name
 SqlSERVER_DB_DRIVER=ODBC Driver 18 for SQL Server
 ```
+
+### Oracle DB
+
+```env
+ORACLE_DB_HOST=host
+ORACLE_DB_PORT=port
+ORACLE_DB_USER=user_name
+ORACLE_DB_PASSWORD=password
+ORACLE_DB_SERVICE=FREEPDB1  # default service name for Oracle Free/Pluggable Database (PDB)
 
 ---
 

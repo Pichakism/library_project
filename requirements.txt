@@ -3,3 +3,4 @@ psycopg2-binary
 pyodbc
 pandas
 python-dotenv
+oracledb

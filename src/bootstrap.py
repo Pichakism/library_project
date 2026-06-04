@@ -3,6 +3,7 @@ from src.storages.mysql_storage import MySqlStorage
 from src.storages.postgreSql_storage import PostgreSqlStorage
 from src.storages.sqlServer_storage import SqlServerStorage
 from src.storages.sqlite_storage import SqliteStorage
+from src.storages.oracle_storage import OracleStorage
 class Bootstrap:
     def __init__(self):
         # -------------------------
@@ -13,7 +14,8 @@ class Bootstrap:
             "MySQL": MySqlStorage(),
             "PostgreSQL": PostgreSqlStorage(),
             "SQLite": SqliteStorage(),
-            "SQLServer": SqlServerStorage()
+            "SQLServer": SqlServerStorage(),
+            "Oracle": OracleStorage()
         }
 
         # active databases that successfully connected

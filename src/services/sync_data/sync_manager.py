@@ -154,7 +154,7 @@ class SyncManager:
 
     def sync_all(self, operation, data):
         results = []
-        for db_name in ["mysql", "postgresql", "sqlserver"]:
+        for db_name in ["mysql", "postgresql", "sqlserver", "oracle"]:
             result = self.execute_on_database(db_name, operation, data, from_queue=False)
             results.append(result)
 

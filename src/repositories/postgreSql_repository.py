@@ -9,7 +9,6 @@ class BookRepository:
                           "publication_year", "page_count", "genre",
                           "book_status", "physical_version", "digital_version", "count"]
         numeric_columns = ["id", "publication_year", "page_count", "count"]
-
         if column not in allowed_column:
             raise ValueError("Invalide Value...")
         if column in numeric_columns:
@@ -26,7 +25,6 @@ class BookRepository:
                 WHERE {column} LIKE %s
             """
             params = (f"%{value}%",)
-        
         try:
             results = self.storage.fetch_all(query, params)
             return results
@@ -65,7 +63,7 @@ class BookRepository:
                 )
             )
             if affected == 0:
-                raise Exception("[MYSQL] BOOK INSERT FAILED")
+                raise Exception("[POSTGRESQL] BOOK INSERT FAILED")
             return affected
         except Exception as e:
             # print("SQL ERROR:", e)
@@ -76,10 +74,8 @@ class BookRepository:
                           "publication_year", "page_count", "genre",
                           "book_status", "physical_version", "digital_version", "count"]
         numeric_columns = ["id", "publication_year", "page_count", "count"]
-
         if column not in allowed_column:
             raise ValueError("Invalide Value...")
-        
         if column in numeric_columns:
             query = f"""
                 DELETE FROM books
@@ -95,7 +91,7 @@ class BookRepository:
         try:
             affected = self.storage.execute(query, params)
             if affected == 0:
-                raise Exception("[MYSQL] BOOK DELETE FAILED")
+                raise Exception("[POSTGRESQL] BOOK DELETE FAILED")
             return affected
         except Exception as e:
             # print("SQL ERROR:", e)
@@ -112,7 +108,7 @@ class BookRepository:
         try:
             affected = self.storage.execute(query, params)
             if affected == 0:
-                raise Exception("[MYSQL] BOOK UPDATE FAILED")
+                raise Exception("[POSTGRESQL] BOOK UPDATE FAILED")
             return affected 
         except Exception as e:
             # print("SQL ERROR:", e)
@@ -124,10 +120,8 @@ class MemberRepository:
 
     def select_member(self, column, value):
         allowed_column = ["id", "member_nID", "first_name", "last_name", "phone_number", "status", "join_date"]
-
         if column not in allowed_column:
             raise ValueError("Invalide value...!")
-        
         if column == "id":
             query = f"""
                         SELECT *
@@ -173,7 +167,7 @@ class MemberRepository:
                 )
             )
             if affected == 0:
-                raise Exception("[MYSQL] MEMBER INSERT FAILED")
+                raise Exception("[POSTGRESQL] MEMBER INSERT FAILED")
             return affected
         except Exception as e:
             # print("SQL ERROR:", e)
@@ -184,16 +178,14 @@ class MemberRepository:
         print(column, type(column))
         if column not in allowed_column:
             raise ValueError("Invalide value...!")
-        
         query = f"""
             DELETE FROM members
             WHERE {column} = %s
         """
-
         try:
             affected = self.storage.execute(query, (value,))
             if affected == 0:
-                raise Exception("[MYSQL] MEMBER DELETE FAILED")
+                raise Exception("[POSTGRESQL] MEMBER DELETE FAILED")
             return affected
         except Exception as e:
             # print("SQL ERROR:", e)
@@ -210,7 +202,7 @@ class MemberRepository:
         try:
             affected = self.storage.execute(query, params)
             if affected == 0:
-                raise Exception("[MYSQL] MEMBER UPDATE FAILED")
+                raise Exception("[POSTGRESQL] MEMBER UPDATE FAILED")
             return affected
         except Exception as e:
             # print("SQL ERROR:", e)
@@ -223,10 +215,8 @@ class LoanRepository:
 
     def select_loan(self, column, value):
         allowed_column = ["id", "book_isbn", "member_nID", "loan_date"]
-
         if column not in allowed_column:
             raise ValueError("Invalide Value...!")
-        
         query = f"""
             SELECT *
             FROM loans
@@ -256,21 +246,33 @@ class LoanRepository:
                 )
             )
             if affected == 0:
-                raise Exception("[MYSQL] LOAN INSERT FAILED")
+                raise Exception("[POSTGRESQL] LOAN INSERT FAILED")
             return affected
         except Exception as e:
             # print("SQL ERROR:", e)
             raise
     
-    def update_loan(self):
-        ...
+    def update_loan(self, column, value, updates):
+        set_clause = ", ".join(f"{field} = %s" for field in updates)
+        query = f"""
+            UPDATE loans
+            SET {set_clause}
+            WHERE {column} = %s
+        """
+        params = (tuple(updates.values()) + (value,))
+        try:
+            affected = self.storage.execute(query, params)
+            if affected == 0:
+                raise Exception("[POSTGRESQL] loans UPDATE FAILED")
+            return affected
+        except Exception as e:
+            # print("SQL ERROR:", e)
+            raise
 
     def delete_loan(self, column, value):
         allowed_column = ["id", "book_isbn", "member_nID", "loan_date"]
-
         if column not in allowed_column:
             raise ValueError("Invalide Value...!")
-        
         query = f"""
             DELETE FROM loans
             WHERE {column} = %s
@@ -278,7 +280,7 @@ class LoanRepository:
         try:
             affected = self.storage.execute(query, (value,))
             if affected == 0:
-                raise Exception("[MYSQL] LOAN DELETE FAILED")
+                raise Exception("[POSTGRESQL] LOAN DELETE FAILED")
             return affected
         except Exception as e:
             # print("SQL ERROR:", e)

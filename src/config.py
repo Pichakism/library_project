@@ -24,3 +24,10 @@ class SqlServerConfig:
     DB_PASSWORD = os.getenv("SqlSERVER_DB_PASSWORD")
     DB_NAME = os.getenv("SqlSERVER_DB_NAME")
     DB_DRIVER = os.getenv("SqlSERVER_DB_DRIVER")
+
+class OracleConfig:
+    DB_HOST = os.getenv("ORACLE_DB_HOST")
+    DB_PORT = os.getenv("ORACLE_DB_PORT")
+    DB_USER = os.getenv("ORACLE_DB_USER")
+    DB_PASSWORD = os.getenv("ORACLE_DB_PASSWORD")
+    DB_SERVICE = os.getenv("ORACLE_DB_SERVICE") 
