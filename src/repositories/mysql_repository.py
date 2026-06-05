@@ -1,10 +1,8 @@
 from src.storages.mysql_storage import MySqlStorage
-from src.services.sync_data.sync_manager import SyncManager
 class BookRepository:
     def __init__(self):
         self.storage = MySqlStorage()
-        self.sync = SyncManager()
-
+        
     def select_book(self, column, value):
         allowed_column = ["id", "book_isbn", "book_title", "author_name",
                           "publication_year", "page_count", "genre",

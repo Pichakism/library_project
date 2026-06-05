@@ -130,7 +130,8 @@ class OracleStorage:
                     WHERE key_name = 'setup_completed'
                 """)
                 row = cursor.fetchone()
-                return row is not None and row[0] == "true"
+
+                return row is not None and str(row[0]).lower() == "true"
 
     def mark_setup_completed(self):
         with self.connect() as connection:
@@ -138,16 +139,13 @@ class OracleStorage:
                 cursor.execute("""
                     MERGE INTO app_metadata t
                     USING (
-                        SELECT
-                            'setup_completed' AS key_name,
+                        SELECT 'setup_completed' AS key_name,
                             'true' AS value
                         FROM dual
                     ) s
                     ON (t.key_name = s.key_name)
-
                     WHEN MATCHED THEN
                         UPDATE SET t.value = s.value
-
                     WHEN NOT MATCHED THEN
                         INSERT (key_name, value)
                         VALUES (s.key_name, s.value)

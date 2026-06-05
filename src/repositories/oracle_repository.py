@@ -1,5 +1,4 @@
 from src.storages.oracle_storage import OracleStorage
-from src.services.sync_data.sync_manager import SyncManager
 class BookRepository:
     def __init__(self):
         self.storage = OracleStorage()
@@ -150,7 +149,7 @@ class MemberRepository:
                 phone_number,
                 status,
                 join_date
-            ) VALUES (:1, :2, :3, :4, :5, :6)
+            ) VALUES (:1, :2, :3, :4, :5, TO_DATE(:6, 'YYYY-MM-DD'))
         """
         try:
             affected = self.storage.execute(
