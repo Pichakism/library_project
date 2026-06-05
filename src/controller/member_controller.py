@@ -1,4 +1,3 @@
-import csv
 import datetime
 from src.services.gtj import gregorian_to_jalali
 from src.models.members import Member
